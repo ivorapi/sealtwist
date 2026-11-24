@@ -1,10 +1,10 @@
-# SealTwist Visual
+# SealTwist Visual · por Rapi
 
 Indicador visual para paladines Reprensión en **WoW Forever, interfaz 16001**. Tres runas doradas muestran los ecos de Orden. Al llenarse la tercera, brillan y aparece **Cambiá a Rectitud**. Con Rectitud, el primer eco enciende una runa celeste y muestra **Volvé a Orden**. El indicador sigue las auras del jugador mediante `Blizzard_AuraContainer`.
 
 ## Instalación
 
-1. Descargá el archivo **SealTwistVisual-1.2.2.zip** de la [versión 1.2.2](https://github.com/ivorapi/sealtwist/releases/tag/v1.2.2).
+1. Descargá el archivo **SealTwistVisual-1.2.3.zip** de la [versión 1.2.3](https://github.com/ivorapi/sealtwist/releases/tag/v1.2.3).
 2. Extraé la carpeta `SealTwistVisual` en `World of Warcraft/_forever_/Interface/AddOns/`. El archivo `SealTwistVisual.toc` debe quedar directamente dentro de esa carpeta del addon.
 3. Activá **SealTwist Visual** en la lista de addons. Si estás actualizando durante una sesión, usá `/reload` fuera de combate.
 

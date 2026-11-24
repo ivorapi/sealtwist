@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 1.2.3
+
+Rapi firma el addon en sus ajustes y en el ícono del minimapa.
+
 ## 1.2.2
 
 La segunda y la tercera runa arrancan apagadas y usan umbrales enteros de dos y tres aplicaciones. Se agregó una prueba para las actualizaciones repetidas del primer eco.
