@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 1.3.0
+
+El addon, la carpeta y el paquete instalable cambian de nombre a RapiTwist. Se incorpora el comando /rapitwist.
+
 ## 1.2.3
 
 Rapi firma el addon en sus ajustes y en el ícono del minimapa.

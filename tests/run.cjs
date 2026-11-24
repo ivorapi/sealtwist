@@ -17,5 +17,5 @@ function run(relativePath, ...args) {
 }
 
 run("tests/client.lua");
-run("SealTwistVisual/SealTwistVisual.lua", "SealTwistVisual");
+run("RapiTwist/RapiTwist.lua", "RapiTwist");
 run("tests/seals.lua");

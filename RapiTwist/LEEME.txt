@@ -1,4 +1,4 @@
-SealTwist Visual 1.2.3 · WoW Forever (interfaz 16001)
+RapiTwist 1.3.0 · WoW Forever (interfaz 16001)
 
 Al activar Sello de Orden, aparece un grupo de tres runas. Cada eco enciende
 un rombo dorado. Cuando se llena el tercero, aparece «Cambiá a Rectitud».
@@ -16,7 +16,7 @@ cancela la colocación. «Reubicar» recupera la posición inicial.
 Para mover el ícono del minimapa, arrastralo por el borde del mapa.
 
 Instalación
-Extraé la carpeta SealTwistVisual del ZIP en World of Warcraft\_forever_\Interface\AddOns.
+Extraé la carpeta RapiTwist del ZIP en World of Warcraft\_forever_\Interface\AddOns.
 Para cargar una actualización durante la sesión, escribí /reload fuera de combate.
 El cliente guarda las preferencias al recargar la interfaz o salir normalmente.
 

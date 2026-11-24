@@ -1,7 +1,7 @@
 unpack = table.unpack
 math.atan2 = function(y,x) return math.atan(y,x) end
 SlashCmdList, UISpecialFrames, frames, containers = {}, {}, {}, {}
-SealTwistVisualDB = {x=0,y=-150,scale=1,locked=true}
+RapiTwistDB = {x=0,y=-150,scale=1,locked=true}
 combat = false
 function InCombatLockdown() return combat end
 function UnitClass() return "Paladín", "PALADIN" end

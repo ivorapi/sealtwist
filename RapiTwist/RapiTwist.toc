@@ -1,10 +1,10 @@
 ## Interface: 16001
-## Title: SealTwist Visual
+## Title: RapiTwist
 ## Notes: Orden: 3 ecos. Rectitud: 1 golpe. Indicador visual de sellos para Forever.
 ## Author: Rapi
-## Version: 1.2.3
-## SavedVariables: SealTwistVisualDB
+## Version: 1.3.0
+## SavedVariables: RapiTwistDB
 ## Dependencies: Blizzard_AuraContainer
 ## IconTexture: Interface\Icons\Ability_Warrior_InnerRage
 
-SealTwistVisual.lua
+RapiTwist.lua

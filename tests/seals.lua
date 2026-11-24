@@ -1,5 +1,5 @@
-send("ADDON_LOADED","SealTwistVisual")
-local root, panel, mini, db = SealTwistVisualFrame, SealTwistVisualOptions, SealTwistVisualMinimapButton, SealTwistVisualDB
+send("ADDON_LOADED","RapiTwist")
+local root, panel, mini, db = RapiTwistFrame, RapiTwistOptions, RapiTwistMinimapButton, RapiTwistDB
 local live, handle=root.children[1],root.children[2]
 assert(#containers==3 and db.x==190 and db.layoutVersion==2 and db.locked==nil)
 assert(root.w==144 and root.h==40 and not root.mouse and not live.mouse)
@@ -44,7 +44,7 @@ assert(visible(panel))
 mini.scripts.OnEnter(mini)
 send("PLAYER_TARGET_CHANGED")
 mini.scripts.OnLeave(mini)
-assert(TargetFrame:IsShown() and GameTooltip:IsShown() and not SealTwistVisualMinimapTip:IsShown())
+assert(TargetFrame:IsShown() and GameTooltip:IsShown() and not RapiTwistMinimapTip:IsShown())
 local pluses={}
 for _,child in ipairs(panel.children) do if child.text=="+" then table.insert(pluses,child) end end
 click(pluses[1]); assert(math.abs(db.scale-1.1)<.001)
@@ -69,7 +69,7 @@ click(withText(panel,"Cuándo mostrar · Con sello activo")); assert(not root.sh
 click(withText(panel,"Mover indicador")); assert(visible(handle)); click(handle,"RightButton")
 assert(not root.shown)
 combat=true; send("PLAYER_REGEN_DISABLED"); assert(root.shown)
-local cmd=SlashCmdList.SEALTWISTVISUAL
+local cmd=SlashCmdList.RAPITWIST
 cmd("ocultar"); assert(not root.shown and visible(mini))
 cmd("siempre"); assert(root.shown)
 cmd("escala 100"); assert(db.scale==1)

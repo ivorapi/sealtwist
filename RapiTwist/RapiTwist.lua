@@ -1,4 +1,4 @@
--- SealTwist Visual • WoW Forever
+-- RapiTwist • WoW Forever
 local ADDON = ...
 local W, H = 144, 40
 local FONT = STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF"
@@ -16,11 +16,11 @@ local function bounded(value, lo, hi)
 end
 
 local function say(message)
-    print("|cffffca70SealTwist|r " .. message)
+    print("|cffffca70RapiTwist|r " .. message)
 end
 
 local function loadSettings()
-    db = type(SealTwistVisualDB) == "table" and SealTwistVisualDB or {}
+    db = type(RapiTwistDB) == "table" and RapiTwistDB or {}
     -- Only relocate the old factory anchor. A manually placed HUD keeps its position.
     if not db.layoutVersion and db.x == 0 and db.y == -150 then
         db.x, db.y = defaults.x, defaults.y
@@ -35,7 +35,7 @@ local function loadSettings()
     db.alpha = bounded(db.alpha, .4, 1)
     db.locked = nil
     db.layoutVersion = 2
-    SealTwistVisualDB = db
+    RapiTwistDB = db
 end
 
 local function rect(parent, layer, x, y, w, h, color, alpha)
@@ -210,7 +210,7 @@ local function beginMove()
 end
 
 local function makeHud()
-    root = CreateFrame("Frame", "SealTwistVisualFrame", UIParent)
+    root = CreateFrame("Frame", "RapiTwistFrame", UIParent)
     root:SetSize(W, H)
     root:SetFrameStrata("LOW")
     root:SetMovable(true)
@@ -258,19 +258,19 @@ local function setScale(value)
 end
 
 local function makePanel()
-    panel = CreateFrame("Frame", "SealTwistVisualOptions", UIParent)
+    panel = CreateFrame("Frame", "RapiTwistOptions", UIParent)
     panel:SetSize(266, 240)
     panel:SetFrameStrata("DIALOG")
     panel:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT", 0, -16)
     panel:SetClampedToScreen(true)
     panel:EnableMouse(true)
     rect(panel, "BACKGROUND", 0, 0, 266, 240, INK, .98)
-    label(panel, "Seal Twist · por Rapi", 15, 12, 18, GOLD)
+    label(panel, "RapiTwist", 15, 12, 18, GOLD)
     rect(panel, "BORDER", 15, 38, 236, 1, {.42, .34, .21})
     local close = CreateFrame("Button", nil, panel, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", 0, 0)
     close:SetScript("OnClick", function() panel:Hide() end)
-    table.insert(UISpecialFrames, "SealTwistVisualOptions")
+    table.insert(UISpecialFrames, "RapiTwistOptions")
 
     local function stepper(title, y, change)
         label(panel, title, 16, y + 4, 13)
@@ -334,7 +334,7 @@ local function orbit()
 end
 
 local function makeLauncher()
-    launcher = CreateFrame("Button", "SealTwistVisualMinimapButton", Minimap)
+    launcher = CreateFrame("Button", "RapiTwistMinimapButton", Minimap)
     launcher:SetSize(32, 32)
     launcher:SetFrameStrata("MEDIUM")
     launcher:SetFrameLevel(Minimap:GetFrameLevel() + 12)
@@ -350,7 +350,7 @@ local function makeLauncher()
     launcher:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
     launcher:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     launcher:RegisterForDrag("LeftButton")
-    local tip = CreateFrame("GameTooltip", "SealTwistVisualMinimapTip", UIParent, "GameTooltipTemplate")
+    local tip = CreateFrame("GameTooltip", "RapiTwistMinimapTip", UIParent, "GameTooltipTemplate")
     local wasDragged = false
     launcher:SetScript("OnMouseDown", function() wasDragged = false end)
     launcher:SetScript("OnDragStart", function(self)
@@ -370,7 +370,7 @@ local function makeLauncher()
     end)
     launcher:SetScript("OnEnter", function(self)
         tip:SetOwner(self, "ANCHOR_LEFT")
-        tip:SetText("Seal Twist · por Rapi")
+        tip:SetText("RapiTwist")
         tip:AddLine("Clic izquierdo para ajustar la apariencia.", 1, .92, .78)
         tip:AddLine("Clic derecho para mover el indicador.", 1, .92, .78)
         tip:AddLine("Arrastrá el ícono por el borde del minimapa.", .78, .76, .73)
@@ -400,14 +400,15 @@ local function command(message)
         position()
         placeLauncher()
     elseif cmd == "diagnostico" or cmd == "debug" then
-        say("1.2.3 · " .. (nativeError or "Visor nativo disponible."))
+        say("1.3.0 · " .. (nativeError or "Visor nativo disponible."))
     else togglePanel() return end
     refresh()
 end
 
-SLASH_SEALTWISTVISUAL1 = "/st"
-SLASH_SEALTWISTVISUAL2 = "/sealtwist"
-SlashCmdList.SEALTWISTVISUAL = command
+SLASH_RAPITWIST1 = "/st"
+SLASH_RAPITWIST2 = "/rapitwist"
+SLASH_RAPITWIST3 = "/sealtwist"
+SlashCmdList.RAPITWIST = command
 local events = CreateFrame("Frame")
 events:RegisterEvent("ADDON_LOADED")
 events:RegisterEvent("PLAYER_REGEN_DISABLED")
