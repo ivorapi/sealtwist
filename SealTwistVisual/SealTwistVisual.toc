@@ -2,7 +2,7 @@
 ## Title: SealTwist Visual
 ## Notes: Orden: 3 ecos. Rectitud: 1 golpe. Indicador visual de sellos para Forever.
 ## Author: Custom
-## Version: 1.2.1
+## Version: 1.2.2
 ## SavedVariables: SealTwistVisualDB
 ## Dependencies: Blizzard_AuraContainer
 ## IconTexture: Interface\Icons\Ability_Warrior_InnerRage

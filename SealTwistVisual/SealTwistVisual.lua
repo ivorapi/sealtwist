@@ -99,8 +99,10 @@ local function threshold(frame, b, count)
         b:SetMinMaxValues(0, 1)
         b:SetValue(1)
     else
-        -- The native bar also gates the visibility of any text attached to it.
-        frame:SetApplicationBar(b, {minApplications = count - .001, maxApplications = count})
+        -- Only visibility matters: the rune and the cue are separate regions.
+        -- Start dark until the client has applied this echo's exact stack count.
+        b:Hide()
+        frame:SetApplicationBar(b, {minApplications = count, maxApplications = count + 1})
     end
 end
 
@@ -398,7 +400,7 @@ local function command(message)
         position()
         placeLauncher()
     elseif cmd == "diagnostico" or cmd == "debug" then
-        say("1.2.1 · " .. (nativeError or "Visor nativo disponible."))
+        say("1.2.2 · " .. (nativeError or "Visor nativo disponible."))
     else togglePanel() return end
     refresh()
 end

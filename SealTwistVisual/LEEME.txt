@@ -1,4 +1,4 @@
-SealTwist Visual 1.2.1 · WoW Forever (interfaz 16001)
+SealTwist Visual 1.2.2 · WoW Forever (interfaz 16001)
 
 Al activar Sello de Orden, aparece un grupo de tres runas. Cada eco enciende
 un rombo dorado. Cuando se llena el tercero, aparece «Cambiá a Rectitud».
