@@ -1,11 +1,9 @@
-SealTwist Visual 1.1.0 · WoW Forever (interfaz 16001)
+SealTwist Visual 1.2.0 · WoW Forever (interfaz 16001)
 
-Al activar Sello de Orden, el indicador muestra tres segmentos dorados.
-Con el tercer eco aparece «Cambiá a Rectitud». Mientras Rectitud está activo,
-esperá el primer eco celeste. En ese momento aparece «Volvé a Orden».
-El ícono siempre identifica el sello activo. Los pequeños trazos bajo el ícono
-son ecos pendientes del otro sello. La línea bajo los segmentos muestra la
-duración del eco actual. El indicador desaparece cuando ambos sellos están inactivos.
+Al activar Sello de Orden, aparece un grupo de tres runas. Cada eco enciende
+un rombo dorado. Cuando se llena el tercero, aparece «Cambiá a Rectitud».
+Con Rectitud hay una sola runa. Esperá a que se encienda en celeste y aparezca
+«Volvé a Orden». Sin ninguno de esos sellos, las runas desaparecen.
 
 Ajustes
 Hacé clic izquierdo en el ícono de sello del minimapa para ajustar el tamaño,

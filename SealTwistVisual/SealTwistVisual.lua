@@ -1,6 +1,6 @@
 -- SealTwist Visual • WoW Forever
 local ADDON = ...
-local W, H = 176, 38
+local W, H = 144, 40
 local FONT = STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF"
 local WHITE = "Interface\\Buttons\\WHITE8X8"
 local COMMAND = {20375, 20915, 20918, 20919, 20920}
@@ -104,47 +104,54 @@ local function threshold(frame, b, count)
     end
 end
 
+-- Small faceted diamonds built with native textures so a reload is enough.
+local function rune(parent, x, size, color, filled)
+    local light = filled and color or {.65, .60, .52}
+    local shade = filled and {color[1] * .68, color[2] * .68, color[3] * .68} or {.08, .07, .08}
+    for row = 0, size - 1 do
+        local half = math.min(row + 1, size - row)
+        local left = x + size / 2 - half
+        rect(parent, "ARTWORK", left, row, half * 2, 1, light)
+        if half > 1 then
+            local inset = filled and half or 1
+            rect(parent, "OVERLAY", left + inset, row, half * 2 - inset - 1, 1, shade)
+        end
+    end
+end
+
+local function caption(parent, message, color)
+    local t = label(parent, message, 0, 0, 13, color)
+    t:ClearAllPoints()
+    t:SetPoint("TOP", parent, "TOP", 0, -24)
+end
+
 local function sealView(frame, isCommand)
     local color = isCommand and GOLD or BLUE
     local echo = isCommand and COMMAND_ECHO or RIGHT_ECHO
     local count = isCommand and 3 or 1
-    rect(frame, "BACKGROUND", 0, 0, W, H, INK, .93)
-    rect(frame, "BORDER", 4, 4, 28, 28, color, .80)
-    local icon = frame:CreateTexture(nil, "ARTWORK")
-    icon:SetPoint("TOPLEFT", 5, -5)
-    icon:SetSize(26, 26)
-    icon:SetTexCoord(.08, .92, .08, .92)
-    icon:SetTexture(iconPath(isCommand and COMMAND[1] or RIGHT[1]))
-    label(frame, isCommand and "Orden" or "Rectitud", 39, 4, 15, color)
-
+    local size = isCommand and 16 or 20
+    local pitch = 23
+    local startX = (W - size - (count - 1) * pitch) / 2
+    caption(frame, isCommand and "Orden" or "Rectitud", LIGHT)
     local c = nativeContainer(frame)
-    local pipWidth = isCommand and 41 or 131
     for i = 1, count do
-        local x = 39 + (i - 1) * 45
-        rect(frame, "ARTWORK", x, 25, pipWidth, 5, {.29, .27, .27})
+        local x = startX + (i - 1) * pitch
+        rune(frame, x, size, color, false)
         slot(c, "lamp" .. i, {echo}, function(f)
-            threshold(f, bar(f, x, 25, pipWidth, 5, color), i)
+            local b = bar(f, x, 0, size, size, color)
+            b:SetStatusBarColor(0, 0, 0, 0)
+            rune(b, 0, size, color, true)
+            threshold(f, b, i)
         end)
     end
-    local pendingCount = isCommand and 1 or 3
-    for i = 1, pendingCount do
-        local x = 5 + (i - 1) * 9
-        slot(c, "pending" .. i, {isCommand and RIGHT_ECHO or COMMAND_ECHO}, function(f)
-            threshold(f, bar(f, x, 33, 7, 2, isCommand and BLUE or GOLD), i)
-        end)
-    end
-    slot(c, "duration", {echo}, function(f)
-        f:SetDurationBar(bar(f, 39, 33, 131, 1, color))
-    end)
     slot(c, "alert", {echo}, function(f)
-        local target = isCommand and BLUE or GOLD
-        local b = bar(f, 36, 2, 138, 20, target)
+        local b = bar(f, 0, 0, W, H, color)
+        b:SetStatusBarColor(0, 0, 0, 0)
+        -- Opaque backing only behind the cue, to replace the idle seal name.
+        local width = isCommand and 128 or 106
+        rect(b, "BACKGROUND", (W - width) / 2, 22, width, 18, INK)
+        caption(b, isCommand and "Cambiá a Rectitud" or "Volvé a Orden", isCommand and BLUE or GOLD)
         threshold(f, b, count)
-        local text = b:CreateFontString(nil, "OVERLAY")
-        text:SetFont(FONT, 13)
-        text:SetPoint("CENTER")
-        text:SetTextColor(.08, .06, .04)
-        text:SetText(isCommand and "Cambiá a Rectitud" or "Volvé a Orden")
     end)
     c:SetEnabled(true)
 end
@@ -195,6 +202,7 @@ end
 local function makeHud()
     root = CreateFrame("Frame", "SealTwistVisualFrame", UIParent)
     root:SetSize(W, H)
+    root:SetFrameStrata("LOW")
     root:SetMovable(true)
     root:SetClampedToScreen(true)
     root:EnableMouse(false)
@@ -212,7 +220,7 @@ local function makeHud()
     handle:SetAllPoints()
     rect(handle, "BACKGROUND", 0, 0, W, H, INK, .96)
     for i = 1, 3 do rect(handle, "ARTWORK", 9 + i * 3, 12, 1, 14, GOLD) end
-    label(handle, "Arrastrá el indicador", 30, 10, 13)
+    label(handle, "Arrastrá acá", 33, 12, 13)
     handle:RegisterForDrag("LeftButton")
     handle:RegisterForClicks("RightButtonUp")
     handle:SetScript("OnDragStart", function()
@@ -332,17 +340,18 @@ local function makeLauncher()
     launcher:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
     launcher:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     launcher:RegisterForDrag("LeftButton")
+    local tip = CreateFrame("GameTooltip", "SealTwistVisualMinimapTip", UIParent, "GameTooltipTemplate")
     local wasDragged = false
     launcher:SetScript("OnMouseDown", function() wasDragged = false end)
     launcher:SetScript("OnDragStart", function(self)
         wasDragged = true
-        GameTooltip:Hide()
+        tip:Hide()
         self:SetScript("OnUpdate", orbit)
     end)
     launcher:SetScript("OnDragStop", function(self) self:SetScript("OnUpdate", nil) end)
     launcher:SetScript("OnClick", function(_, key)
         if wasDragged then return end
-        GameTooltip:Hide()
+        tip:Hide()
         if key == "RightButton" then
             if editing then finishMove() else beginMove() end
         else
@@ -350,16 +359,16 @@ local function makeLauncher()
         end
     end)
     launcher:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-        GameTooltip:SetText("Seal Twist")
-        GameTooltip:AddLine("Clic izquierdo para ajustar la apariencia.", 1, .92, .78)
-        GameTooltip:AddLine("Clic derecho para mover el indicador.", 1, .92, .78)
-        GameTooltip:AddLine("Arrastrá el ícono por el borde del minimapa.", .78, .76, .73)
-        GameTooltip:Show()
+        tip:SetOwner(self, "ANCHOR_LEFT")
+        tip:SetText("Seal Twist")
+        tip:AddLine("Clic izquierdo para ajustar la apariencia.", 1, .92, .78)
+        tip:AddLine("Clic derecho para mover el indicador.", 1, .92, .78)
+        tip:AddLine("Arrastrá el ícono por el borde del minimapa.", .78, .76, .73)
+        tip:Show()
     end)
-    launcher:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    launcher:SetScript("OnLeave", function() tip:Hide() end)
     placeLauncher()
-    Minimap:HookScript("OnSizeChanged", placeLauncher)
+    launcher:SetScript("OnShow", placeLauncher)
 end
 
 local function command(message)
@@ -381,7 +390,7 @@ local function command(message)
         position()
         placeLauncher()
     elseif cmd == "diagnostico" or cmd == "debug" then
-        say("1.1.0 · " .. (nativeError or "Visor nativo disponible."))
+        say("1.2.0 · " .. (nativeError or "Visor nativo disponible."))
     else togglePanel() return end
     refresh()
 end
