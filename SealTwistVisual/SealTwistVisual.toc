@@ -1,0 +1,10 @@
+## Interface: 16001
+## Title: SealTwist Visual
+## Notes: Orden: 3 ecos. Rectitud: 1 golpe. Indicador visual de sellos para Forever.
+## Author: Custom
+## Version: 1.0.0
+## SavedVariables: SealTwistVisualDB
+## Dependencies: Blizzard_AuraContainer
+## IconTexture: Interface\Icons\Ability_Warrior_InnerRage
+
+SealTwistVisual.lua

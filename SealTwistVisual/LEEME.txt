@@ -1,0 +1,75 @@
+SEALTWIST VISUAL 1.0.0 - WOW FOREVER
+
+Solo sellos y ecos. Sin sonidos ni rotación completa.
+
+QUÉ MUESTRA
+
+ORDEN: tres luces doradas se llenan con los ecos reales. Al llegar a tres,
+el cartel dice CAMBIÁ A RECTITUD.
+
+RECTITUD: el cartel dice ESPERÁ EL AUTOATAQUE. Cuando aparece el primer
+eco real de Rectitud, dice VOLVÉ A ORDEN.
+
+Las luces pequeñas de abajo muestran los ecos del sello anterior que
+todavía están guardados. La línea fina muestra la duración del eco activo.
+Si se elimina o vence un sello, aparece el mensaje para activar un sello.
+
+Los golpes fallados no se cuentan por aproximación: el cliente dibuja
+las cargas directamente desde sus auras. Holy Strike y Sentencia no
+intervienen en la lógica del addon.
+
+INSTALACIÓN
+
+Ya se copió una versión en la instalación local encontrada:
+C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns\SealTwistVisual
+
+Para instalar el ZIP en otra máquina, extraé la carpeta SealTwistVisual
+adentro de World of Warcraft\_forever_\Interface\AddOns.
+La estructura final debe ser:
+AddOns\SealTwistVisual\SealTwistVisual.toc
+AddOns\SealTwistVisual\SealTwistVisual.lua
+
+Ejecutá /reload fuera de combate. Si el addon nuevo no aparece en la lista,
+cerrá y abrí el juego. Activá SealTwist Visual en la lista de AddOns.
+
+COMANDOS
+
+/st demo              Iniciar o terminar una demostración sin datos de combate.
+                      Hacé clic en el panel para recorrer sus siete estados.
+                      La demo termina automáticamente al entrar en combate.
+/st desbloquear       Permitir arrastrar el panel fuera de combate.
+/st fijar             Bloquear la posición y dejar pasar clics al juego.
+/st escala 1.2        Tamaño del panel, entre 0.6 y 2.
+/st combate           Mostrar solo en combate, salvo al moverlo o en demo.
+/st siempre           Mostrar también fuera de combate (predeterminado).
+/st ocultar           Ocultar el panel.
+/st mostrar           Volver a mostrarlo.
+/st reset             Restablecer posición, tamaño y visibilidad.
+/st diagnostico       Información de versión y de carga del visor.
+
+/sealtwist sirve como alternativa a /st.
+Los ajustes se guardan al ejecutar /reload o al cerrar sesión normalmente.
+La demo se identifica con la palabra DEMO y no cambia tus sellos.
+
+COMPATIBILIDAD Y PRUEBAS
+
+Dirigido a Forever 1.60.1, interfaz 16001. La instalación local se identificó
+como compilación 71091. Usa Blizzard_AuraContainer como dependencia.
+
+Verificado con Lua en un cliente simulado: sintaxis, umbrales 0/1/2/3,
+espera del primer eco de Rectitud, ecos pendientes, eliminación de auras,
+demo, salida automática de demo en combate y ajustes.
+
+Estas pruebas no sustituyen una prueba en combate dentro del juego.
+Si /st diagnostico informa un error del visor, copiá el texto para depurarlo.
+El addon no reemplaza auras ocultas por un contador de golpes estimado.
+
+REFERENCIAS TÉCNICAS
+
+API y código del cliente de Blizzard (espejo del código de interfaz):
+https://github.com/Gethe/wow-ui-source/blob/forever/Interface/AddOns/Blizzard_AuraContainer/Blizzard_CustomAuraContainer.lua
+https://github.com/Gethe/wow-ui-source/blob/forever/Interface/AddOns/Blizzard_AuraContainer/Blizzard_CustomAuraButton.lua
+
+IDs de ecos usados: Orden 1311703, Rectitud 1311704.
+No se extrajo una rotación óptima de Warcraft Logs: este addon implementa
+exclusivamente el ciclo elegido por el usuario.
