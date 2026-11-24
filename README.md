@@ -1,33 +1,28 @@
 # RapiTwist
 
-Indicador visual para paladines Reprensión en **WoW Forever, interfaz 16001**. Tres runas doradas muestran los ecos de Orden. Al llenarse la tercera, brillan y aparece **Cambiá a Rectitud**. Con Rectitud, el primer eco enciende una runa celeste y muestra **Volvé a Orden**. El indicador sigue las auras del jugador mediante `Blizzard_AuraContainer`.
+A visual seal-twisting tracker for paladins in **WoW Forever (interface 16001)**. Choose two seals and an echo goal for each. The active seal lights one rune per echo. At the selected threshold, the runes glow and **Swap to Wisdom**, for example, tells you which seal to use next.
 
-## Instalación
+## Set up your pair
 
-1. Descargá el archivo **RapiTwist-1.3.0.zip** de la [versión 1.3.0](https://github.com/ivorapi/sealtwist/releases/tag/v1.3.0).
-2. Extraé la carpeta `RapiTwist` en `World of Warcraft/_forever_/Interface/AddOns/`. El archivo `RapiTwist.toc` debe quedar directamente dentro de esa carpeta del addon.
-3. Activá **RapiTwist** en la lista de addons. Si estás actualizando durante una sesión, usá `/reload` fuera de combate.
+1. Open the minimap button or type `/rapitwist`.
+2. Click the seal name in **First** or **Second** to cycle through choices. Picking the other slot's seal exchanges the pair. Click **Echo goal** in each row to cycle through one, two or three stacks.
+3. Choose **Apply and reload UI** outside combat. Closing the panel discards pending seal edits.
 
-### Actualizar desde 1.2.x
+Command, Righteousness, Fury, Justice, Light and Wisdom use the player's native echo auras. Crusader and Martyrdom display their active state with **Manual** timing. Gold identifies the first slot and blue identifies the second. The default pair is Command at three echoes and Righteousness at one.
 
-Con WoW cerrado, mové la carpeta antigua `SealTwistVisual` fuera de `Interface/AddOns`. Para conservar los ajustes, copiá `WTF/Account/<cuenta>/SavedVariables/SealTwistVisual.lua` como `RapiTwist.lua` en el mismo directorio y cambiá el nombre de la variable inicial de `SealTwistVisualDB` a `RapiTwistDB`. Si ya existe el nuevo archivo, conservá su contenido. Iniciá WoW y abrí los ajustes con `/rapitwist` o `/st`.
+## Installation
 
-## Controles
+Download [RapiTwist-1.4.0.zip](https://github.com/ivorapi/sealtwist/releases/download/v1.4.0/RapiTwist-1.4.0.zip). Extract the `RapiTwist` folder into `World of Warcraft/_forever_/Interface/AddOns/`. Enable RapiTwist in the addon list. Use `/reload` after updating from 1.3.0.
 
-| Acción | Control |
-| --- | --- |
-| Ajustar tamaño, opacidad y visibilidad | Clic izquierdo en el ícono del minimapa o `/st` |
-| Mover las runas | Fuera de combate, clic derecho en el ícono. Arrastrá el indicador y soltalo |
-| Reubicar el ícono del minimapa | Arrastrá el ícono por el borde |
-| Consultar la versión y el estado del visor | `/st diagnostico` |
+When upgrading from SealTwist Visual 1.2.x, close WoW and move the old `SealTwistVisual` addon folder out of `Interface/AddOns`. To keep its settings, copy `WTF/Account/<account>/SavedVariables/SealTwistVisual.lua` to `RapiTwist.lua` in the same directory and rename the initial variable from `SealTwistVisualDB` to `RapiTwistDB`. Keep your existing RapiTwist settings file if present.
 
-La [guía del addon](RapiTwist/LEEME.txt) incluye todos los comandos.
+## Controls
 
-## Desarrollo
+Right-click the minimap button to move the tracker outside combat. Drag the minimap button to reposition it. The settings panel includes size, opacity and visibility controls. [All commands](RapiTwist/README.txt)
 
-El código que carga el juego está en `RapiTwist/`. Las pruebas en `tests/` ejecutan ese mismo Lua con un cliente simulado. Cubren los umbrales de los ecos, avisos, brillo, expiración y ajustes. La apariencia y el comportamiento del cliente en combate se verifican dentro de WoW.
+## Development
 
-Desde la raíz del repositorio, con Node.js 22, npm y PowerShell 7:
+The addon uses Blizzard's native aura containers. The Lua tests simulate the client and exercise seal selection, stack thresholds, alerts and positioning. From the repository root, using Node.js 22, npm and PowerShell 7:
 
 ```sh
 npm ci
@@ -35,6 +30,4 @@ npm test
 pwsh -File scripts/package.ps1
 ```
 
-El empaquetador toma la versión del manifiesto y genera el ZIP en `dist/`. GitHub Actions ejecuta las pruebas y verifica el empaquetado en cada push y pull request.
-
-[Historial de cambios](CHANGELOG.md) · [Licencia MIT](LICENSE)
+The installable ZIP is written to `dist/`. [Changelog](CHANGELOG.md) · [MIT license](LICENSE)

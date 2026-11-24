@@ -19,3 +19,15 @@ function run(relativePath, ...args) {
 run("tests/client.lua");
 run("RapiTwist/RapiTwist.lua", "RapiTwist");
 run("tests/seals.lua");
+for (const pair of [
+    ["Wisdom", "Light", "20357", "1328206", "20349", "1328198"],
+    ["Fury", "Justice", "20423", "1311701", "20164", "1311705"],
+    ["Crusader", "Command", "20308", "manual", "20920", "1311703"],
+    ["Righteousness", "Martyrdom", "20154", "1311704", "407798", "manual"],
+]) {
+    run("tests/client.lua");
+    run("tests/pair-settings.lua", ...pair);
+    run("RapiTwist/RapiTwist.lua", "RapiTwist");
+    run("tests/pair-checks.lua", ...pair);
+}
+console.log("PASS: selected pairs, rank filters, manual seals and per-slot swap cues");

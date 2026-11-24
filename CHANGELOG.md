@@ -1,29 +1,25 @@
-# Historial de cambios
+# Changelog
+
+## 1.4.0
+Choose the seal pair and echo goal for each slot. Added English swap cues, settings and documentation, plus active-state tracking for seals without a mapped echo.
 
 ## 1.3.0
-
-El addon, la carpeta y el paquete instalable cambian de nombre a RapiTwist. Se incorpora el comando /rapitwist.
+Renamed the addon and distribution to RapiTwist and added the /rapitwist command.
 
 ## 1.2.3
-
-Rapi firma el addon en sus ajustes y en el ícono del minimapa.
+Added the Rapi author credit.
 
 ## 1.2.2
-
-La segunda y la tercera runa arrancan apagadas y usan umbrales enteros de dos y tres aplicaciones. Se agregó una prueba para las actualizaciones repetidas del primer eco.
+Changed the second and third rune thresholds to exact stack counts and tested duplicate first-echo updates.
 
 ## 1.2.1
-
-Las runas brillan al cambiar de sello. Los avisos se muestran con fondo transparente.
+Added rune glow and transparent swap cues.
 
 ## 1.2.0
-
-Los ecos se representan con runas. El botón del minimapa usa su propia ayuda emergente.
+Introduced the rune display and a dedicated minimap tooltip.
 
 ## 1.1.0
-
-Indicador compacto con ajustes de tamaño, opacidad, posición y visibilidad desde el minimapa. Se retiró la demostración.
+Added the compact tracker, minimap controls and appearance settings. Removed demo mode.
 
 ## 1.0.0
-
-Primera versión del seguimiento de ecos de Orden y Rectitud.
+Added native Command and Righteousness echo tracking.

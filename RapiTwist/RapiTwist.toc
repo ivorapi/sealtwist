@@ -1,8 +1,8 @@
 ## Interface: 16001
 ## Title: RapiTwist
-## Notes: Orden: 3 ecos. Rectitud: 1 golpe. Indicador visual de sellos para Forever.
+## Notes: Track a chosen pair of paladin seals with rune and swap cues.
 ## Author: Rapi
-## Version: 1.3.0
+## Version: 1.4.0
 ## SavedVariables: RapiTwistDB
 ## Dependencies: Blizzard_AuraContainer
 ## IconTexture: Interface\Icons\Ability_Warrior_InnerRage

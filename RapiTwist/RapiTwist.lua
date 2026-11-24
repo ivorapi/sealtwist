@@ -3,9 +3,17 @@ local ADDON = ...
 local W, H = 144, 40
 local FONT = STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF"
 local WHITE = "Interface\\Buttons\\WHITE8X8"
-local COMMAND = {20375, 20915, 20918, 20919, 20920}
-local RIGHT = {21084, 20287, 20288, 20289, 20290, 20291, 20292, 20293}
-local COMMAND_ECHO, RIGHT_ECHO = 1311703, 1311704
+local seals = {
+    Command = {echo = 1311703, ranks = {20375, 20915, 20918, 20919, 20920}},
+    Righteousness = {echo = 1311704, ranks = {21084, 20154, 20287, 20288, 20289, 20290, 20291, 20292, 20293}},
+    Fury = {echo = 1311701, ranks = {1311649, 1311656, 20163, 20419, 20421, 20422, 20423}},
+    Justice = {echo = 1311705, ranks = {20164}},
+    Light = {echo = 1328198, ranks = {20165, 20347, 20348, 20349}},
+    Wisdom = {echo = 1328206, ranks = {20166, 20356, 20357}},
+    Crusader = {ranks = {21082, 20162, 20305, 20306, 20307, 20308}},
+    Martyrdom = {ranks = {407798}},
+}
+local choices = {"Command", "Righteousness", "Fury", "Justice", "Light", "Wisdom", "Crusader", "Martyrdom"}
 local GOLD, BLUE, INK, LIGHT = {1, .79, .40}, {.58, .85, 1}, {.048, .044, .052}, {1, .97, .89}
 local defaults = {x = 190, y = -160, scale = 1, alpha = 1, angle = 220, combatOnly = false, hidden = false}
 local db, root, live, handle, panel, launcher, refreshPanel, nativeError
@@ -33,6 +41,13 @@ local function loadSettings()
     end
     db.scale = bounded(db.scale, .6, 2)
     db.alpha = bounded(db.alpha, .4, 1)
+    if not seals[db.firstSeal] or not seals[db.secondSeal] or db.firstSeal == db.secondSeal then
+        db.firstSeal, db.secondSeal = "Command", "Righteousness"
+    end
+    for key, fallback in pairs({firstCount = 3, secondCount = 1}) do
+        local n = db[key]
+        if n ~= 1 and n ~= 2 and n ~= 3 then db[key] = fallback end
+    end
     db.locked = nil
     db.layoutVersion = 2
     RapiTwistDB = db
@@ -127,16 +142,17 @@ local function caption(parent, message, color)
     t:SetPoint("TOP", parent, "TOP", 0, -24)
 end
 
-local function sealView(frame, isCommand)
-    local color = isCommand and GOLD or BLUE
-    local echo = isCommand and COMMAND_ECHO or RIGHT_ECHO
-    local count = isCommand and 3 or 1
-    local size = isCommand and 16 or 20
-    local pitch = 23
+local function sealView(frame, active, nextSeal, count, color, nextColor)
+    local echo = seals[active].echo
+    if not echo then
+        caption(frame, active .. " (manual)", color)
+        return
+    end
+    local size = count == 1 and 20 or 16
+    local pitch = 22
     local runesWidth = size + (count - 1) * pitch
-    local nameWidth = isCommand and 36 or 48
-    local startX = math.floor((W - runesWidth - 6 - nameWidth) / 2)
-    label(frame, isCommand and "Orden" or "Rectitud", startX + runesWidth + 6, 2, 12, LIGHT)
+    local startX = 0
+    label(frame, active, runesWidth + 5, 2, 11, LIGHT)
     local c = nativeContainer(frame)
     for i = 1, count do
         local x = startX + (i - 1) * pitch
@@ -160,7 +176,7 @@ local function sealView(frame, isCommand)
             glow:SetSize(size * 2, size * 2)
             glow:SetPoint("CENTER", b, "TOPLEFT", startX + (i - 1) * pitch + size / 2, -size / 2)
         end
-        caption(b, isCommand and "Cambiá a Rectitud" or "Volvé a Orden", isCommand and BLUE or GOLD)
+        caption(b, "Swap to " .. nextSeal, nextColor)
         threshold(f, b, count)
     end)
     c:SetEnabled(true)
@@ -168,8 +184,12 @@ end
 
 local function buildTracker()
     local c = nativeContainer(live)
-    slot(c, "commandSeal", COMMAND, function(f) sealView(f, true) end)
-    slot(c, "rightSeal", RIGHT, function(f) sealView(f, false) end)
+    slot(c, "firstSeal", seals[db.firstSeal].ranks, function(f)
+        sealView(f, db.firstSeal, db.secondSeal, db.firstCount, GOLD, BLUE)
+    end)
+    slot(c, "secondSeal", seals[db.secondSeal].ranks, function(f)
+        sealView(f, db.secondSeal, db.firstSeal, db.secondCount, BLUE, GOLD)
+    end)
     c:SetEnabled(true)
 end
 
@@ -203,7 +223,7 @@ local function finishMove()
 end
 
 local function beginMove()
-    if InCombatLockdown() then say("Podés mover el indicador al salir de combate.") return end
+    if InCombatLockdown() then say("Move the tracker after combat.") return end
     panel:Hide()
     editing = true
     refresh()
@@ -224,13 +244,13 @@ local function makeHud()
     local ok, err = pcall(buildTracker)
     if not ok then
         nativeError = tostring(err)
-        say("No se pudo cargar el visor de auras. Consultá /st diagnostico.")
+        say("Aura tracking failed to load. Use /st debug for details.")
     end
     handle = CreateFrame("Button", nil, root)
     handle:SetAllPoints()
     rect(handle, "BACKGROUND", 0, 0, W, H, INK, .96)
     for i = 1, 3 do rect(handle, "ARTWORK", 9 + i * 3, 12, 1, 14, GOLD) end
-    label(handle, "Arrastrá acá", 33, 12, 13)
+    label(handle, "Drag here", 33, 12, 13)
     handle:RegisterForDrag("LeftButton")
     handle:RegisterForClicks("RightButtonUp")
     handle:SetScript("OnDragStart", function()
@@ -259,12 +279,12 @@ end
 
 local function makePanel()
     panel = CreateFrame("Frame", "RapiTwistOptions", UIParent)
-    panel:SetSize(266, 240)
+    panel:SetSize(266, 369)
     panel:SetFrameStrata("DIALOG")
     panel:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT", 0, -16)
     panel:SetClampedToScreen(true)
     panel:EnableMouse(true)
-    rect(panel, "BACKGROUND", 0, 0, 266, 240, INK, .98)
+    rect(panel, "BACKGROUND", 0, 0, 266, 369, INK, .98)
     label(panel, "RapiTwist", 15, 12, 18, GOLD)
     rect(panel, "BORDER", 15, 38, 236, 1, {.42, .34, .21})
     local close = CreateFrame("Button", nil, panel, "UIPanelCloseButton")
@@ -283,8 +303,8 @@ local function makePanel()
         button(panel, "+", 223, y, 28, function() adjust(1) end)
         return value
     end
-    local size = stepper("Tamaño", 48, function(step) setScale(db.scale + .1 * step) end)
-    local opacity = stepper("Opacidad", 80, function(step) db.alpha = bounded(db.alpha + .1 * step, .4, 1) end)
+    local size = stepper("Size", 48, function(step) setScale(db.scale + .1 * step) end)
+    local opacity = stepper("Opacity", 80, function(step) db.alpha = bounded(db.alpha + .1 * step, .4, 1) end)
     local combat = button(panel, "", 15, 117, 236, function()
         db.combatOnly = not db.combatOnly
         refresh()
@@ -293,20 +313,68 @@ local function makePanel()
         db.hidden = not db.hidden
         refresh()
     end)
-    local move = button(panel, "Mover indicador", 15, 181, 143, beginMove)
-    button(panel, "Reubicar", 162, 181, 89, function()
+    local move = button(panel, "Move tracker", 15, 181, 143, beginMove)
+    button(panel, "Reset position", 162, 181, 89, function()
         db.x, db.y = defaults.x, defaults.y
         position()
         refresh()
     end)
     local hint = label(panel, "", 16, 214, 11, GOLD)
+    local draft = {}
+    local function clearDraft()
+        draft = {firstSeal = db.firstSeal, secondSeal = db.secondSeal,
+            firstCount = db.firstCount, secondCount = db.secondCount}
+    end
+    clearDraft()
+    panel:SetScript("OnHide", clearDraft)
+    local function selector(title, key, other, countKey, y)
+        label(panel, title, 15, y + 5, 12)
+        local selectSeal = button(panel, "", 71, y, 111, function()
+            if InCombatLockdown() then return end
+            local index = 1
+            while choices[index] ~= draft[key] do index = index + 1 end
+            -- Selecting the other seal exchanges the two slots.
+            local value = choices[index % #choices + 1]
+            if value == draft[other] then draft[other] = draft[key] end
+            draft[key] = value
+            refresh()
+        end)
+        local stacks = button(panel, "", 185, y, 66, function()
+            if InCombatLockdown() or not seals[draft[key]].echo then return end
+            draft[countKey] = draft[countKey] % 3 + 1
+            refresh()
+        end)
+        return function()
+            selectSeal:SetText(draft[key])
+            selectSeal:SetEnabled(not InCombatLockdown())
+            local echo = seals[draft[key]].echo
+            stacks:SetEnabled(echo ~= nil and not InCombatLockdown())
+            stacks:SetText(echo and (draft[countKey] .. " / 3") or "Manual")
+        end
+    end
+    rect(panel, "BORDER", 15, 238, 236, 1, {.42, .34, .21})
+    label(panel, "Seal pair", 15, 245, 13, GOLD)
+    label(panel, "Echo goal", 185, 245, 12, LIGHT)
+    local firstRow = selector("First", "firstSeal", "secondSeal", "firstCount", 265)
+    local secondRow = selector("Second", "secondSeal", "firstSeal", "secondCount", 295)
+    local apply = button(panel, "Apply and reload UI", 15, 330, 236, function()
+        if InCombatLockdown() then return end
+        for key, value in pairs(draft) do db[key] = value end
+        local reload = C_UI and C_UI.Reload or ReloadUI
+        reload()
+    end)
     refreshPanel = function()
+        firstRow()
+        secondRow()
+        local changed = draft.firstSeal ~= db.firstSeal or draft.secondSeal ~= db.secondSeal
+            or draft.firstCount ~= db.firstCount or draft.secondCount ~= db.secondCount
+        apply:SetEnabled(changed and not InCombatLockdown())
         size:SetText(("%d%%"):format(math.floor(db.scale * 100 + .5)))
         opacity:SetText(("%d%%"):format(math.floor(db.alpha * 100 + .5)))
-        combat:SetText(db.combatOnly and "Cuándo mostrar · Solo en combate" or "Cuándo mostrar · Con sello activo")
-        visibility:SetText(db.hidden and "Indicador oculto · Mostrar" or "Indicador visible · Ocultar")
+        combat:SetText(db.combatOnly and "Show in combat only" or "Show with an active seal")
+        visibility:SetText(db.hidden and "Tracker hidden · Show" or "Tracker visible · Hide")
         move:SetEnabled(not InCombatLockdown())
-        hint:SetText(InCombatLockdown() and "Podés moverlo al salir de combate." or "Soltá el indicador para fijarlo.")
+        hint:SetText(InCombatLockdown() and "Move the tracker after combat." or "Drop the tracker to save its position.")
     end
     panel:Hide()
 end
@@ -339,7 +407,7 @@ local function makeLauncher()
     launcher:SetFrameStrata("MEDIUM")
     launcher:SetFrameLevel(Minimap:GetFrameLevel() + 12)
     local icon = launcher:CreateTexture(nil, "ARTWORK")
-    icon:SetTexture(iconPath(COMMAND[1]))
+    icon:SetTexture(iconPath(seals[db.firstSeal].ranks[1]))
     icon:SetSize(19, 19)
     icon:SetPoint("CENTER")
     icon:SetTexCoord(.08, .92, .08, .92)
@@ -371,9 +439,9 @@ local function makeLauncher()
     launcher:SetScript("OnEnter", function(self)
         tip:SetOwner(self, "ANCHOR_LEFT")
         tip:SetText("RapiTwist")
-        tip:AddLine("Clic izquierdo para ajustar la apariencia.", 1, .92, .78)
-        tip:AddLine("Clic derecho para mover el indicador.", 1, .92, .78)
-        tip:AddLine("Arrastrá el ícono por el borde del minimapa.", .78, .76, .73)
+        tip:AddLine("Left-click for seals and appearance.", 1, .92, .78)
+        tip:AddLine("Right-click to move the tracker.", 1, .92, .78)
+        tip:AddLine("Drag to move this minimap button.", .78, .76, .73)
         tip:Show()
     end)
     launcher:SetScript("OnLeave", function() tip:Hide() end)
@@ -388,11 +456,11 @@ local function command(message)
     if cmd == "fijar" or cmd == "lock" then finishMove() return end
     if cmd == "ocultar" or cmd == "hide" then db.hidden = true
     elseif cmd == "mostrar" or cmd == "show" then db.hidden = false
-    elseif cmd == "combate" then db.combatOnly = true
-    elseif cmd == "siempre" then db.combatOnly, db.hidden = false, false
+    elseif cmd == "combat" or cmd == "combate" then db.combatOnly = true
+    elseif cmd == "always" or cmd == "siempre" then db.combatOnly, db.hidden = false, false
     elseif cmd == "escala" or cmd == "scale" then
         local s = tonumber(arg)
-        if not s or not (s >= .6 and s <= 2) then say("Usá /st escala 1.2 (entre 0.6 y 2).") return end
+        if not s or not (s >= .6 and s <= 2) then say("Use /st scale 1.2 (range 0.6 to 2).") return end
         setScale(s)
     elseif cmd == "reset" then
         finishMove()
@@ -400,7 +468,7 @@ local function command(message)
         position()
         placeLauncher()
     elseif cmd == "diagnostico" or cmd == "debug" then
-        say("1.3.0 · " .. (nativeError or "Visor nativo disponible."))
+        say("1.4.0 · " .. (nativeError or "Native aura tracker available."))
     else togglePanel() return end
     refresh()
 end
