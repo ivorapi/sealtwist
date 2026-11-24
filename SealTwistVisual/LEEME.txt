@@ -1,9 +1,10 @@
-SealTwist Visual 1.2.0 · WoW Forever (interfaz 16001)
+SealTwist Visual 1.2.1 · WoW Forever (interfaz 16001)
 
 Al activar Sello de Orden, aparece un grupo de tres runas. Cada eco enciende
 un rombo dorado. Cuando se llena el tercero, aparece «Cambiá a Rectitud».
 Con Rectitud hay una sola runa. Esperá a que se encienda en celeste y aparezca
 «Volvé a Orden». Sin ninguno de esos sellos, las runas desaparecen.
+Al llegar el momento de cambiar, las runas brillan y el aviso aparece sobre el juego.
 
 Ajustes
 Hacé clic izquierdo en el ícono de sello del minimapa para ajustar el tamaño,

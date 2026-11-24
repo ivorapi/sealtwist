@@ -131,8 +131,10 @@ local function sealView(frame, isCommand)
     local count = isCommand and 3 or 1
     local size = isCommand and 16 or 20
     local pitch = 23
-    local startX = (W - size - (count - 1) * pitch) / 2
-    caption(frame, isCommand and "Orden" or "Rectitud", LIGHT)
+    local runesWidth = size + (count - 1) * pitch
+    local nameWidth = isCommand and 36 or 48
+    local startX = math.floor((W - runesWidth - 6 - nameWidth) / 2)
+    label(frame, isCommand and "Orden" or "Rectitud", startX + runesWidth + 6, 2, 12, LIGHT)
     local c = nativeContainer(frame)
     for i = 1, count do
         local x = startX + (i - 1) * pitch
@@ -147,9 +149,15 @@ local function sealView(frame, isCommand)
     slot(c, "alert", {echo}, function(f)
         local b = bar(f, 0, 0, W, H, color)
         b:SetStatusBarColor(0, 0, 0, 0)
-        -- Opaque backing only behind the cue, to replace the idle seal name.
-        local width = isCommand and 128 or 106
-        rect(b, "BACKGROUND", (W - width) / 2, 22, width, 18, INK)
+        -- The same native threshold reveals the text and the light on each rune.
+        for i = 1, count do
+            local glow = b:CreateTexture(nil, "OVERLAY")
+            glow:SetTexture("Interface\\Cooldown\\star4")
+            glow:SetBlendMode("ADD")
+            glow:SetVertexColor(unpack(color))
+            glow:SetSize(size * 2, size * 2)
+            glow:SetPoint("CENTER", b, "TOPLEFT", startX + (i - 1) * pitch + size / 2, -size / 2)
+        end
         caption(b, isCommand and "Cambiá a Rectitud" or "Volvé a Orden", isCommand and BLUE or GOLD)
         threshold(f, b, count)
     end)
@@ -390,7 +398,7 @@ local function command(message)
         position()
         placeLauncher()
     elseif cmd == "diagnostico" or cmd == "debug" then
-        say("1.2.0 · " .. (nativeError or "Visor nativo disponible."))
+        say("1.2.1 · " .. (nativeError or "Visor nativo disponible."))
     else togglePanel() return end
     refresh()
 end
