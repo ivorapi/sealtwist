@@ -1,11 +1,11 @@
 send("ADDON_LOADED","RapiTwist")
 local root, panel, mini, db = RapiTwistFrame, RapiTwistOptions, RapiTwistMinimapButton, RapiTwistDB
 local live, handle=root.children[1],root.children[2]
-assert(#containers==5 and db.x==0 and db.y==-55 and db.layoutVersion==3 and db.locked==nil)
+assert(#containers==7 and db.x==0 and db.y==-55 and db.layoutVersion==3 and db.locked==nil)
 assert(root.w==180 and root.h==132 and not root.mouse and not live.mouse)
 assert(not visible(handle) and not visible(panel) and visible(mini))
 assert(not live.scripts.OnUpdate, "The HUD must not poll protected aura frames")
-local outer,ord,ordAlert,right,rightAlert=unpack(containers)
+local outer,ordWait,ord,ordAlert,rightWait,right,rightAlert=unpack(containers)
 assert(not ord.slots.lamp2.bar:IsShown() and not ord.slots.lamp3.bar:IsShown())
 assert(ord.slots.lamp2.options.minApplications==2 and ordAlert.slots.alert.options.minApplications==3)
 for _, tracker in ipairs({ord, right}) do
@@ -13,6 +13,14 @@ for _, tracker in ipairs({ord, right}) do
         local r, g, b = unpack(arc.tint)
         assert(b > r and b > g and ((g > r) == (tracker == ord)), "Incorrect earned echo color")
     end
+end
+local function hasHit(group)
+    for _,slot in ipairs(group.groups) do
+        for _,region in ipairs(slot.children) do
+            if region.text=="HIT" and visible(region) then return true end
+        end
+    end
+    return false
 end
 local function probe(aurasNow,ordOn,rightOn)
     auras(aurasNow)
@@ -28,11 +36,9 @@ for n=0,3 do
     end
     assert(visible(ordAlert.slots.alert.children[1])==(n==3))
     local cue=ordAlert.slots.alert.children[1]
-    assert(visible(withText(ord.parent,"HIT")))
+    assert(hasHit(ordWait)==(n<3))
     assert(visible(withText(cue,"SWAP"))==(n==3))
     for _,region in ipairs(cue.children) do assert(not region.color, "Solid swap backdrop") end
-    local hit,swap=withText(ord.parent,"HIT"),withText(cue,"SWAP")
-    assert(math.abs(hit.point[5]-swap.point[5])>=18, "Cue baselines overlap")
     for _,region in ipairs(ord.parent.children) do
         if region.tint then assert(region.tint[3]>region.tint[1] and region.tint[4]<.4, "Warm or bright empty arc") end
     end
@@ -51,24 +57,26 @@ for _,n in ipairs({0,1,1,2,3,1,1}) do
     assert(visible(ord.slots.lamp1.children[1]))
     assert(visible(ord.slots.lamp2.bar)==(n>=2))
     assert(visible(ordAlert.slots.alert.bar)==(n>=3))
+    assert(hasHit(ordWait)==(n<3))
 end
 -- Swap from three stored echoes. A missed hit leaves the aura snapshot unchanged.
 for attempt=1,2 do
     probe({[21084]=0,[1311703]=3},false,true)
-    assert(visible(withText(right.parent,"HIT")))
+    assert(hasHit(rightWait))
     assert(not visible(withText(rightAlert.slots.alert.children[1],"SWAP")))
 end
 assert(not visible(right.slots.lamp1) and not visible(rightAlert.slots.alert.children[1]))
 probe({[21084]=0,[1311704]=0},false,true)
 assert(visible(rightAlert.slots.alert.children[1]) and visible(right.slots.lamp1))
+assert(not hasHit(rightWait))
 local cue=rightAlert.slots.alert.children[1]
 assert(visible(cue.children[1]) and cue.children[1].children[1].tint[1]==1)
 probe({[20920]=0,[1311703]=1,[1311704]=1},true,false)
 assert(visible(ord.slots.lamp1) and not visible(ordAlert.slots.alert.children[1]))
-assert(visible(withText(ord.parent,"HIT")))
+assert(hasHit(ordWait))
 probe({},false,false)
 probe({[20375]=0},true,false)
-assert(visible(withText(ord.parent,"HIT")) and not visible(ordAlert.slots.alert.bar))
+assert(hasHit(ordWait) and not visible(ordAlert.slots.alert.bar))
 probe({},false,false)
 click(mini)
 assert(visible(panel))

@@ -74,6 +74,20 @@ function M:StartMoving() self.moving=true end
 function M:StopMovingOrSizing() self.moving=false end
 function M:SetApplicationBar(b,options) self.bar,self.options=b,options end
 function M:SetDurationBar(b) self.duration=b end
+C_StringUtil = {CreateNumericRuleFormatter=function()
+    return {SetBreakpoints=function(self,rules) self.rules=rules end}
+end}
+function M:SetClipsChildren(clips) self.clips=clips end
+function M:SetApplicationCount(label,options)
+    self.countLabel,self.formatter=label,options.formatter
+end
+function M:AddAuraGroup(key,filter,options)
+    self:AddAuraSlot(key,filter,options)
+    local f=self.slots[key]
+    self.groups=self.groups or {}
+    self.groups[options.layout.layoutIndex]=f
+    assert(options.maxFrameCount==1 and options.layout.elementWidth==f.w)
+end
 function M:AddAuraSlot(key,filter,options)
     assert(filter=="HELPFUL" and not self.slots[key])
     local f=CreateFrame("AuraButton",nil,self)
@@ -94,7 +108,19 @@ function auras(values)
             local n=nil
             for id in pairs(f.filter) do if values[id]~=nil then n=values[id] end end
             f:SetShown(n~=nil)
+            if f.countLabel then
+                local text=""
+                for _,rule in ipairs(f.formatter.rules) do
+                    if n and n>=rule.threshold then text=rule.format end
+                end
+                f.countLabel:SetText(text)
+            end
             if f.bar then f.bar:SetShown((n or 0)>=f.options.minApplications) end
+        end
+        local offset=0
+        for _,f in ipairs(c.groups or {}) do
+            f.clipped=c.parent.clips and offset>=c.parent.w
+            if f.shown then offset=offset+f.w end
         end
     end
     for _,f in ipairs(frames) do
@@ -102,7 +128,7 @@ function auras(values)
     end
 end
 function visible(f)
-    if not f.shown or f.alpha==0 then return false end
+    if not f.shown or f.clipped or f.alpha==0 then return false end
     return not f.parent or visible(f.parent)
 end
 function click(f,key) f.scripts.OnClick(f,key or "LeftButton") end

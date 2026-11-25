@@ -146,6 +146,44 @@ local function caption(parent, message, color, offset)
     return t
 end
 
+-- A one-cell viewport shows the echo group's caption when an echo exists,
+-- otherwise the active seal's caption. Blizzard lays out and formats both.
+local function waitCaption(parent, seal, count)
+    local viewport = CreateFrame("Frame", nil, parent)
+    viewport:SetSize(80, 20)
+    viewport:SetPoint("TOP", parent, "TOP", 0, -78)
+    viewport:SetClipsChildren(true)
+    viewport:EnableMouse(false)
+    local cues = nativeContainer(viewport)
+    local formatter
+    if count > 1 then
+        formatter = C_StringUtil.CreateNumericRuleFormatter()
+        formatter:SetBreakpoints({{threshold = 0, format = "HIT"}, {threshold = count, format = ""}})
+    end
+    local function group(key, ids, order, draw)
+        local allowed = {}
+        for _, id in ipairs(ids) do allowed[id] = true end
+        cues:AddAuraGroup(key, "HELPFUL", {
+            candidateFilters = {includeSpellIDs = allowed},
+            maxFrameCount = 1,
+            layout = {layoutIndex = order, elementWidth = 80, elementHeight = 20},
+            initializeFrame = function(f)
+                f:SetSize(80, 20)
+                f:EnableMouse(false)
+                draw(f)
+            end,
+        })
+    end
+    group("echo", {seal.echo}, 1, function(f)
+        -- For a goal of one, even a displayed zero-stack echo means ready.
+        if formatter then
+            f:SetApplicationCount(caption(f, "", BLUE, 0), {formatter = formatter})
+        end
+    end)
+    group("seal", seal.ranks, 2, function(f) caption(f, "HIT", BLUE, 0) end)
+    cues:SetEnabled(true)
+end
+
 local function sealView(frame, active, nextSeal, count, color)
     local echo = seals[active].echo
     if not echo then
@@ -156,7 +194,7 @@ local function sealView(frame, active, nextSeal, count, color)
     local waiting = CreateFrame("Frame", nil, frame)
     waiting:SetAllPoints()
     waiting:EnableMouse(false)
-    caption(waiting, "HIT", BLUE, 78)
+    waitCaption(waiting, seals[active], count)
     local lamps = nativeContainer(waiting)
     for i = 1, count do
         arcSegment(waiting, i, count, EMPTY, .32)
@@ -471,7 +509,7 @@ local function command(message)
         position()
         placeLauncher()
     elseif cmd == "diagnostico" or cmd == "debug" then
-        say("1.6.5 · " .. (nativeError or "Native aura tracker available."))
+        say("1.6.6 · " .. (nativeError or "Native aura tracker available."))
     else togglePanel() return end
     refresh()
 end

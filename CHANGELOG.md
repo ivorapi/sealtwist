@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.6.6
+Show HIT only below the active echo goal. The native aura layout and stack formatter switch the caption without polling protected frames.
+
 ## 1.6.5
 Remove the per-frame visibility read of restricted aura bars. HIT labels progress while a selected seal is active, and the native echo threshold displays SWAP below it.
 
