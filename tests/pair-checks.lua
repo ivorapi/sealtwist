@@ -18,7 +18,8 @@ local function check(slot, rankID, echoID, active, destination, goal)
     for n = 1, 3 do
         values[tonumber(echoID)] = n
         auras(values)
-        assert(visible(withText(cue, "Swap to " .. destination)) == (n >= goal))
+        assert(visible(withText(cue, "SWAP")) == (n >= goal))
+        assert(visible(withText(cue, destination)) == (n >= goal))
     end
 end
 check(firstSlot, rank, echo, first, second, 2)

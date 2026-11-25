@@ -15,6 +15,7 @@ local seals = {
 }
 local choices = {"Command", "Righteousness", "Fury", "Justice", "Light", "Wisdom", "Crusader", "Martyrdom"}
 local GOLD, BLUE, INK, LIGHT = {1, .79, .40}, {.58, .85, 1}, {.048, .044, .052}, {1, .97, .89}
+local CORAL = {1, .53, .46}
 local defaults = {x = 0, y = -55, scale = 1, alpha = 1, angle = 220, combatOnly = false, hidden = false}
 local db, root, live, handle, panel, launcher, refreshPanel, nativeError
 local editing, dragging = false, false
@@ -143,19 +144,20 @@ local function arcSegment(parent, index, count, color, alpha, thickness)
     end
 end
 
-local function caption(parent, message, color)
+local function caption(parent, message, color, offset)
     local t = label(parent, message, 0, 0, 13, color)
     t:ClearAllPoints()
-    t:SetPoint("TOP", parent, "TOP", 0, -116)
+    t:SetPoint("TOP", parent, "TOP", 0, -(offset or 116))
 end
 
-local function sealView(frame, active, nextSeal, count, color, nextColor)
+local function sealView(frame, active, nextSeal, count, color)
     local echo = seals[active].echo
     if not echo then
         arcSegment(frame, 1, 1, color, .4, 4)
         caption(frame, active .. " (manual)", color)
         return
     end
+    caption(frame, "HIT", BLUE, 97)
     local c = nativeContainer(frame)
     for i = 1, count do
         arcSegment(frame, i, count, color, .49, 4)
@@ -173,10 +175,17 @@ local function sealView(frame, active, nextSeal, count, color, nextColor)
         pulse:SetAllPoints()
         pulse:EnableMouse(false)
         for i = 1, count do
-            arcSegment(b, i, count, nextColor, 1, 6)
-            arcSegment(pulse, i, count, nextColor, .65, 12)
+            arcSegment(b, i, count, CORAL, 1, 6)
+            arcSegment(pulse, i, count, CORAL, .65, 12)
         end
-        caption(b, "Swap to " .. nextSeal, nextColor)
+        -- Only the native threshold bar paints over the waiting word.
+        rect(b, "ARTWORK", (W - 52) / 2, 95, 52, 19, CORAL)
+        local action = b:CreateFontString(nil, "OVERLAY")
+        action:SetFont(FONT, 14, "")
+        action:SetPoint("TOP", b, "TOP", 0, -97)
+        action:SetTextColor(unpack(INK))
+        action:SetText("SWAP")
+        caption(b, nextSeal, CORAL)
         threshold(f, b, count)
     end)
     c:SetEnabled(true)
@@ -185,10 +194,10 @@ end
 local function buildTracker()
     local c = nativeContainer(live)
     slot(c, "firstSeal", seals[db.firstSeal].ranks, function(f)
-        sealView(f, db.firstSeal, db.secondSeal, db.firstCount, GOLD, BLUE)
+        sealView(f, db.firstSeal, db.secondSeal, db.firstCount, GOLD)
     end)
     slot(c, "secondSeal", seals[db.secondSeal].ranks, function(f)
-        sealView(f, db.secondSeal, db.firstSeal, db.secondCount, BLUE, GOLD)
+        sealView(f, db.secondSeal, db.firstSeal, db.secondCount, BLUE)
     end)
     c:SetEnabled(true)
 end
@@ -467,7 +476,7 @@ local function command(message)
         position()
         placeLauncher()
     elseif cmd == "diagnostico" or cmd == "debug" then
-        say("1.5.1 · " .. (nativeError or "Native aura tracker available."))
+        say("1.6.0 · " .. (nativeError or "Native aura tracker available."))
     else togglePanel() return end
     refresh()
 end

@@ -27,7 +27,7 @@ for n=0,3 do
     for _,tex in ipairs(pulse.children) do
         left=left or tex.point[4]<30
         right=right or tex.point[4]>100
-        assert(tex.tint[1]==.58 and tex.blend=="ADD", "Expected blue destination pulse")
+        assert(tex.tint[1]==1 and tex.tint[2]==.53 and tex.blend=="ADD", "Expected coral swap pulse")
     end
     assert(left and right)
 end
@@ -37,7 +37,12 @@ for _,n in ipairs({0,1,1,2,3,1,1}) do
     assert(visible(ord.slots.lamp2.bar)==(n>=2))
     assert(visible(ord.slots.alert.bar)==(n>=3))
 end
-probe({[21084]=0,[1311703]=3},false,true)
+-- Swap from three stored echoes. A missed hit leaves the aura snapshot unchanged.
+for attempt=1,2 do
+    probe({[21084]=0,[1311703]=3},false,true)
+    assert(visible(withText(outer.slots.secondSeal,"HIT")))
+    assert(not visible(withText(right.slots.alert.children[1],"SWAP")))
+end
 assert(not visible(right.slots.lamp1) and not visible(right.slots.alert.children[1]))
 probe({[21084]=0,[1311704]=0},false,true)
 assert(visible(right.slots.alert.children[1]) and visible(right.slots.lamp1))

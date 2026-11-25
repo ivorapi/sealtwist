@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.6.0
+Show HIT while waiting for echoes. At the selected goal, both arcs pulse coral and SWAP appears with the destination seal.
+
 ## 1.5.1
 Antialiased arc textures replace joined line segments. Empty arcs retain the active slot color after a swap.
 
