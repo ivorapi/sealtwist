@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.6.1
+Remove the solid SWAP badge and align the arc pulse with the underlying stroke. The ready cue hides the waiting layer.
+
 ## 1.6.0
 Show HIT while waiting for echoes. At the selected goal, both arcs pulse coral and SWAP appears with the destination seal.
 

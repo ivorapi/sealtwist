@@ -124,23 +124,19 @@ end
 
 -- Mirror one antialiased atlas tile. Transparent padding separates adjacent tiles.
 local ARC_TEXTURE = "Interface\\AddOns\\RapiTwist\\SideArcs"
-local function arcSegment(parent, index, count, color, alpha, thickness)
+local function arcSegment(parent, index, count, color, alpha, additive)
     local u = (count - 1) * 128 / 512
     local v = (index - 1) * 340 / 1024
-    local width = 32 * thickness / 5
     for side = -1, 1, 2 do
         local t = parent:CreateTexture(nil, "ARTWORK")
         t:SetTexture(ARC_TEXTURE, "CLAMP", "CLAMP", "LINEAR")
         local left, right = u, u + 128 / 512
         if side < 0 then left, right = right, left end
         t:SetTexCoord(left, right, v, v + 336 / 1024)
-        t:SetSize(width, 84)
-        -- Keep the middle of the curved edge at the same x across stroke sizes.
-        local edge = W / 2 + side * 83
-        local x = side > 0 and edge - width * 19 / 32 or edge - width * 13 / 32
-        t:SetPoint("TOPLEFT", parent, "TOPLEFT", x, 3)
+        t:SetSize(32, 84)
+        t:SetPoint("TOPLEFT", parent, "TOPLEFT", side > 0 and 154 or W - 186, 3)
         t:SetVertexColor(color[1], color[2], color[3], alpha)
-        if thickness > 6 then t:SetBlendMode("ADD") end
+        if additive then t:SetBlendMode("ADD") end
     end
 end
 
@@ -153,21 +149,26 @@ end
 local function sealView(frame, active, nextSeal, count, color)
     local echo = seals[active].echo
     if not echo then
-        arcSegment(frame, 1, 1, color, .4, 4)
+        arcSegment(frame, 1, 1, color, .4)
         caption(frame, active .. " (manual)", color)
         return
     end
-    caption(frame, "HIT", BLUE, 97)
-    local c = nativeContainer(frame)
+    local waiting = CreateFrame("Frame", nil, frame)
+    waiting:SetAllPoints()
+    waiting:EnableMouse(false)
+    caption(waiting, "HIT", BLUE, 97)
+    local lamps = nativeContainer(waiting)
     for i = 1, count do
-        arcSegment(frame, i, count, color, .49, 4)
-        slot(c, "lamp" .. i, {echo}, function(f)
+        arcSegment(waiting, i, count, color, .49)
+        slot(lamps, "lamp" .. i, {echo}, function(f)
             local b = bar(f, 0, 0, W, H, color)
             b:SetStatusBarColor(0, 0, 0, 0)
-            arcSegment(b, i, count, color, .68, 5)
+            arcSegment(b, i, count, color, .68)
             threshold(f, b, i)
         end)
     end
+    lamps:SetEnabled(true)
+    local c = nativeContainer(frame)
     slot(c, "alert", {echo}, function(f)
         local b = bar(f, 0, 0, W, H, color)
         b:SetStatusBarColor(0, 0, 0, 0)
@@ -175,16 +176,13 @@ local function sealView(frame, active, nextSeal, count, color)
         pulse:SetAllPoints()
         pulse:EnableMouse(false)
         for i = 1, count do
-            arcSegment(b, i, count, CORAL, 1, 6)
-            arcSegment(pulse, i, count, CORAL, .65, 12)
+            arcSegment(b, i, count, CORAL, 1)
+            arcSegment(pulse, i, count, CORAL, .65, true)
         end
-        -- Only the native threshold bar paints over the waiting word.
-        rect(b, "ARTWORK", (W - 52) / 2, 95, 52, 19, CORAL)
-        local action = b:CreateFontString(nil, "OVERLAY")
-        action:SetFont(FONT, 14, "")
-        action:SetPoint("TOP", b, "TOP", 0, -97)
-        action:SetTextColor(unpack(INK))
-        action:SetText("SWAP")
+        -- The threshold owns this visual transition, including when an echo expires.
+        local gate = CreateFrame("Frame", nil, b, "RapiTwistWaitGateTemplate")
+        gate.Mute.WaitAlpha:SetTarget(waiting)
+        caption(b, "SWAP", CORAL, 97)
         caption(b, nextSeal, CORAL)
         threshold(f, b, count)
     end)
@@ -257,7 +255,7 @@ local function makeHud()
     end
     handle = CreateFrame("Button", nil, root)
     handle:SetAllPoints()
-    arcSegment(handle, 1, 1, GOLD, .85, 5)
+    arcSegment(handle, 1, 1, GOLD, .85)
     caption(handle, "Drag both arcs", LIGHT)
     handle:RegisterForDrag("LeftButton")
     handle:RegisterForClicks("RightButtonUp")
@@ -476,7 +474,7 @@ local function command(message)
         position()
         placeLauncher()
     elseif cmd == "diagnostico" or cmd == "debug" then
-        say("1.6.0 · " .. (nativeError or "Native aura tracker available."))
+        say("1.6.1 · " .. (nativeError or "Native aura tracker available."))
     else togglePanel() return end
     refresh()
 end

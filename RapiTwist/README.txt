@@ -1,4 +1,4 @@
-RapiTwist 1.6.0 for WoW Forever (interface 16001)
+RapiTwist 1.6.1 for WoW Forever (interface 16001)
 
 Left-click the minimap button or type /rapitwist to open settings.
 Click First or Second's seal name to cycle through the seals. Picking the

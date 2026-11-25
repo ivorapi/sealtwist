@@ -12,6 +12,9 @@ local M = {}
 function CreateFrame(kind, name, parent, template)
     local f = setmetatable({kind=kind,parent=parent,template=template,children={},shown=true,
         scale=1,w=100,h=100,scripts={},events={},slots={},cx=960,cy=540}, {__index=M})
+    if template=="RapiTwistWaitGateTemplate" then
+        f.Mute={WaitAlpha={SetTarget=function(_,target) target.mutedBy=f end}}
+    end
     if parent then table.insert(parent.children, f) end
     if name then _G[name]=f end
     if kind=="AuraContainer" then table.insert(containers,f) end
@@ -85,7 +88,7 @@ function auras(values)
     end
 end
 function visible(f)
-    if not f.shown then return false end
+    if not f.shown or (f.mutedBy and visible(f.mutedBy)) then return false end
     return not f.parent or visible(f.parent)
 end
 function click(f,key) f.scripts.OnClick(f,key or "LeftButton") end
