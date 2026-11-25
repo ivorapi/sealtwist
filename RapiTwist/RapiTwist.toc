@@ -1,10 +1,11 @@
 ## Interface: 16001
 ## Title: RapiTwist
-## Notes: Track a chosen pair of paladin seals with rune and swap cues.
+## Notes: Track a chosen pair of paladin seals with side arcs and swap cues.
 ## Author: Rapi
-## Version: 1.4.0
+## Version: 1.5.0
 ## SavedVariables: RapiTwistDB
 ## Dependencies: Blizzard_AuraContainer
 ## IconTexture: Interface\Icons\Ability_Warrior_InnerRage
 
+ArcPulse.xml
 RapiTwist.lua

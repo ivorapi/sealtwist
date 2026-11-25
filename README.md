@@ -1,6 +1,6 @@
 # RapiTwist
 
-A visual seal-twisting tracker for paladins in **WoW Forever (interface 16001)**. Choose two seals and an echo goal for each. The active seal lights one rune per echo. At the selected threshold, the runes glow and **Swap to Wisdom**, for example, tells you which seal to use next.
+A visual seal-twisting tracker for paladins in **WoW Forever (interface 16001)**. Choose two seals and an echo goal for each. Each echo fills a matching segment on the left and right of the character. At the goal, both arcs pulse briefly in the destination seal’s color and the swap cue appears below the character. Right-click the minimap button to position both arcs together.
 
 ## Set up your pair
 
@@ -8,11 +8,11 @@ A visual seal-twisting tracker for paladins in **WoW Forever (interface 16001)**
 2. Click the seal name in **First** or **Second** to cycle through choices. Picking the other slot's seal exchanges the pair. Click **Echo goal** in each row to cycle through one, two or three stacks.
 3. Choose **Apply and reload UI** outside combat. Closing the panel discards pending seal edits.
 
-Command, Righteousness, Fury, Justice, Light and Wisdom use the player's native echo auras. Crusader and Martyrdom display their active state with **Manual** timing. Gold identifies the first slot and blue identifies the second. The default pair is Command at three echoes and Righteousness at one.
+Command, Righteousness, Fury, Justice, Light and Wisdom use the player's native echo auras. Crusader and Martyrdom display their active state with **Manual** timing. Gold identifies the first slot and blue identifies the second. Upgrading to the side-arc layout centers the tracker once. The default pair is Command at three echoes and Righteousness at one.
 
 ## Installation
 
-Download [RapiTwist-1.4.0.zip](https://github.com/ivorapi/sealtwist/releases/download/v1.4.0/RapiTwist-1.4.0.zip). Extract the `RapiTwist` folder into `World of Warcraft/_forever_/Interface/AddOns/`. Enable RapiTwist in the addon list. Use `/reload` after updating from 1.3.0.
+Download [RapiTwist-1.5.0.zip](https://github.com/ivorapi/sealtwist/releases/download/v1.5.0/RapiTwist-1.5.0.zip). Extract the `RapiTwist` folder into `World of Warcraft/_forever_/Interface/AddOns/`. Enable RapiTwist in the addon list. Use `/reload` after updating from 1.3.0.
 
 When upgrading from SealTwist Visual 1.2.x, close WoW and move the old `SealTwistVisual` addon folder out of `Interface/AddOns`. To keep its settings, copy `WTF/Account/<account>/SavedVariables/SealTwistVisual.lua` to `RapiTwist.lua` in the same directory and rename the initial variable from `SealTwistVisualDB` to `RapiTwistDB`. Keep your existing RapiTwist settings file if present.
 

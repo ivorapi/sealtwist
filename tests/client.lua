@@ -39,6 +39,11 @@ function M:SetPoint(...) self.point={...} end
 function M:GetFrameLevel() return 5 end
 function M:GetCenter() return self.cx,self.cy end
 function M:SetUnit(unit) assert(unit=="player") end
+function M:CreateLine() return CreateFrame("Line",nil,self) end
+function M:SetStartPoint(_,_,x,y) self.startX,self.startY=x,y end
+function M:SetEndPoint(_,_,x,y) self.endX,self.endY=x,y end
+function M:SetThickness(n) self.thickness=n end
+function M:SetColorTexture(r,g,b,a) self.color={r,g,b,a} end
 function M:CreateTexture() return CreateFrame("Texture",nil,self) end
 function M:CreateFontString() return CreateFrame("Font",nil,self) end
 function M:SetText(txt) self.text=txt end
@@ -63,7 +68,7 @@ function M:AddAuraSlot(key,filter,options)
     options.initializeFrame(f)
 end
 for _,k in ipairs({"SetMinMaxValues","SetTexture","SetFrameStrata","SetFrameLevel","SetTexCoord",
-    "SetStatusBarTexture","SetStatusBarColor","SetAllPoints","SetColorTexture","SetFont","SetTextColor",
+    "SetStatusBarTexture","SetStatusBarColor","SetAllPoints","SetFont","SetTextColor",
     "SetHighlightTexture","SetClampedToScreen","SetMovable","RegisterForClicks","RegisterForDrag",
     "ClearAllPoints","SetOwner","AddLine"}) do M[k]=function() end end
 function send(ev,...)

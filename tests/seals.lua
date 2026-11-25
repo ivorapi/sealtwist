@@ -1,8 +1,8 @@
 send("ADDON_LOADED","RapiTwist")
 local root, panel, mini, db = RapiTwistFrame, RapiTwistOptions, RapiTwistMinimapButton, RapiTwistDB
 local live, handle=root.children[1],root.children[2]
-assert(#containers==3 and db.x==190 and db.layoutVersion==2 and db.locked==nil)
-assert(root.w==144 and root.h==40 and not root.mouse and not live.mouse)
+assert(#containers==3 and db.x==0 and db.y==-55 and db.layoutVersion==3 and db.locked==nil)
+assert(root.w==180 and root.h==132 and not root.mouse and not live.mouse)
 assert(not visible(handle) and not visible(panel) and visible(mini))
 local outer,ord,right=containers[1],containers[2],containers[3]
 assert(not ord.slots.lamp2.bar:IsShown() and not ord.slots.lamp3.bar:IsShown())
@@ -21,8 +21,15 @@ for n=0,3 do
     end
     assert(visible(ord.slots.alert.children[1])==(n==3))
     local cue=ord.slots.alert.children[1]
-    assert(#cue.children==4 and cue.children[4].kind=="Font")
-    for i=1,3 do assert(cue.children[i].blend=="ADD" and visible(cue.children[i])==(n==3)) end
+    local pulse=cue.children[1]
+    assert(pulse.template=="RapiTwistArcPulseTemplate" and visible(pulse)==(n==3))
+    local left,right=false,false
+    for _,line in ipairs(pulse.children) do
+        left=left or (line.startX<30 and line.endX<30)
+        right=right or (line.startX>150 and line.endX>150)
+        assert(line.color[1]==.58, "Expected blue destination pulse")
+    end
+    assert(left and right)
 end
 for _,n in ipairs({0,1,1,2,3,1,1}) do
     probe({[20375]=0,[1311703]=n},true,false)
@@ -35,7 +42,7 @@ assert(not visible(right.slots.lamp1) and not visible(right.slots.alert.children
 probe({[21084]=0,[1311704]=0},false,true)
 assert(visible(right.slots.alert.children[1]) and visible(right.slots.lamp1))
 local cue=right.slots.alert.children[1]
-assert(#cue.children==2 and cue.children[1].blend=="ADD" and visible(cue.children[1]))
+assert(visible(cue.children[1]) and cue.children[1].children[1].color[1]==1)
 probe({[20920]=0,[1311703]=1,[1311704]=1},true,false)
 assert(visible(ord.slots.lamp1) and not visible(ord.slots.alert.children[1]))
 probe({},false,false)
@@ -78,7 +85,7 @@ assert(math.abs(db.angle-90)<.001)
 mini.scripts.OnDragStop(mini); assert(not mini.scripts.OnUpdate)
 click(mini); assert(not panel.shown)
 mini.scripts.OnMouseDown(); click(mini); assert(panel.shown)
-click(withText(panel,"Reset position")); assert(db.x==190 and db.y==-160)
+click(withText(panel,"Reset position")); assert(db.x==0 and db.y==-55)
 cmd("reset"); assert(db.angle==220 and db.alpha==1 and db.scale==1)
 combat=false; send("PLAYER_REGEN_ENABLED")
 click(withText(panel,"Command"))

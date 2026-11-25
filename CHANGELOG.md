@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.5.0
+Side arcs now flank the character. Both arcs pulse in the destination color at the selected echo goal. The layout recenters once on upgrade and can be moved from the minimap.
+
 ## 1.4.0
 Choose the seal pair and echo goal for each slot. Added English swap cues, settings and documentation, plus active-state tracking for seals without a mapped echo.
 

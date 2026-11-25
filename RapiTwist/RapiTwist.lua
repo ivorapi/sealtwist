@@ -1,6 +1,6 @@
 -- RapiTwist • WoW Forever
 local ADDON = ...
-local W, H = 144, 40
+local W, H = 180, 132
 local FONT = STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF"
 local WHITE = "Interface\\Buttons\\WHITE8X8"
 local seals = {
@@ -15,7 +15,7 @@ local seals = {
 }
 local choices = {"Command", "Righteousness", "Fury", "Justice", "Light", "Wisdom", "Crusader", "Martyrdom"}
 local GOLD, BLUE, INK, LIGHT = {1, .79, .40}, {.58, .85, 1}, {.048, .044, .052}, {1, .97, .89}
-local defaults = {x = 190, y = -160, scale = 1, alpha = 1, angle = 220, combatOnly = false, hidden = false}
+local defaults = {x = 0, y = -55, scale = 1, alpha = 1, angle = 220, combatOnly = false, hidden = false}
 local db, root, live, handle, panel, launcher, refreshPanel, nativeError
 local editing, dragging = false, false
 
@@ -29,8 +29,8 @@ end
 
 local function loadSettings()
     db = type(RapiTwistDB) == "table" and RapiTwistDB or {}
-    -- Only relocate the old factory anchor. A manually placed HUD keeps its position.
-    if not db.layoutVersion and db.x == 0 and db.y == -150 then
+    -- The paired arcs have a different anchor from the old single-row tracker.
+    if db.layoutVersion ~= 3 then
         db.x, db.y = defaults.x, defaults.y
     end
     for key, value in pairs(defaults) do
@@ -49,7 +49,7 @@ local function loadSettings()
         if n ~= 1 and n ~= 2 and n ~= 3 then db[key] = fallback end
     end
     db.locked = nil
-    db.layoutVersion = 2
+    db.layoutVersion = 3
     RapiTwistDB = db
 end
 
@@ -121,17 +121,26 @@ local function threshold(frame, b, count)
     end
 end
 
--- Small faceted diamonds built with native textures so a reload is enough.
-local function rune(parent, x, size, color, filled)
-    local light = filled and color or {.65, .60, .52}
-    local shade = filled and {color[1] * .68, color[2] * .68, color[3] * .68} or {.08, .07, .08}
-    for row = 0, size - 1 do
-        local half = math.min(row + 1, size - row)
-        local left = x + size / 2 - half
-        rect(parent, "ARTWORK", left, row, half * 2, 1, light)
-        if half > 1 then
-            local inset = filled and half or 1
-            rect(parent, "OVERLAY", left + inset, row, half * 2 - inset - 1, 1, shade)
+-- Mirror each segment across the center so one echo fills both sides together.
+local function arcSegment(parent, index, count, color, alpha, thickness)
+    local span = 1.24 / count
+    local start = -.62 + (index - 1) * span + .024
+    local sweep = span - .048
+    local steps = math.ceil(12 / count)
+    for side = -1, 1, 2 do
+        local lastX, lastY
+        for step = 0, steps do
+            local angle = start + sweep * step / steps
+            local x = W / 2 + side * (24 + 59 * math.cos(angle))
+            local y = -39 - 59 * math.sin(angle)
+            if lastX then
+                local line = parent:CreateLine(nil, "ARTWORK")
+                line:SetColorTexture(color[1], color[2], color[3], alpha)
+                line:SetThickness(thickness)
+                line:SetStartPoint("TOPLEFT", parent, lastX, lastY)
+                line:SetEndPoint("TOPLEFT", parent, x, y)
+            end
+            lastX, lastY = x, y
         end
     end
 end
@@ -139,42 +148,35 @@ end
 local function caption(parent, message, color)
     local t = label(parent, message, 0, 0, 13, color)
     t:ClearAllPoints()
-    t:SetPoint("TOP", parent, "TOP", 0, -24)
+    t:SetPoint("TOP", parent, "TOP", 0, -116)
 end
 
 local function sealView(frame, active, nextSeal, count, color, nextColor)
     local echo = seals[active].echo
     if not echo then
+        arcSegment(frame, 1, 1, color, .4, 4)
         caption(frame, active .. " (manual)", color)
         return
     end
-    local size = count == 1 and 20 or 16
-    local pitch = 22
-    local runesWidth = size + (count - 1) * pitch
-    local startX = 0
-    label(frame, active, runesWidth + 5, 2, 11, LIGHT)
     local c = nativeContainer(frame)
     for i = 1, count do
-        local x = startX + (i - 1) * pitch
-        rune(frame, x, size, color, false)
+        arcSegment(frame, i, count, LIGHT, .25, 4)
         slot(c, "lamp" .. i, {echo}, function(f)
-            local b = bar(f, x, 0, size, size, color)
+            local b = bar(f, 0, 0, W, H, color)
             b:SetStatusBarColor(0, 0, 0, 0)
-            rune(b, 0, size, color, true)
+            arcSegment(b, i, count, color, .68, 5)
             threshold(f, b, i)
         end)
     end
     slot(c, "alert", {echo}, function(f)
         local b = bar(f, 0, 0, W, H, color)
         b:SetStatusBarColor(0, 0, 0, 0)
-        -- The same native threshold reveals the text and the light on each rune.
+        local pulse = CreateFrame("Frame", nil, b, "RapiTwistArcPulseTemplate")
+        pulse:SetAllPoints()
+        pulse:EnableMouse(false)
         for i = 1, count do
-            local glow = b:CreateTexture(nil, "OVERLAY")
-            glow:SetTexture("Interface\\Cooldown\\star4")
-            glow:SetBlendMode("ADD")
-            glow:SetVertexColor(unpack(color))
-            glow:SetSize(size * 2, size * 2)
-            glow:SetPoint("CENTER", b, "TOPLEFT", startX + (i - 1) * pitch + size / 2, -size / 2)
+            arcSegment(b, i, count, nextColor, 1, 6)
+            arcSegment(pulse, i, count, nextColor, .65, 12)
         end
         caption(b, "Swap to " .. nextSeal, nextColor)
         threshold(f, b, count)
@@ -248,9 +250,8 @@ local function makeHud()
     end
     handle = CreateFrame("Button", nil, root)
     handle:SetAllPoints()
-    rect(handle, "BACKGROUND", 0, 0, W, H, INK, .96)
-    for i = 1, 3 do rect(handle, "ARTWORK", 9 + i * 3, 12, 1, 14, GOLD) end
-    label(handle, "Drag here", 33, 12, 13)
+    arcSegment(handle, 1, 1, GOLD, .85, 5)
+    caption(handle, "Drag both arcs", LIGHT)
     handle:RegisterForDrag("LeftButton")
     handle:RegisterForClicks("RightButtonUp")
     handle:SetScript("OnDragStart", function()
@@ -468,7 +469,7 @@ local function command(message)
         position()
         placeLauncher()
     elseif cmd == "diagnostico" or cmd == "debug" then
-        say("1.4.0 · " .. (nativeError or "Native aura tracker available."))
+        say("1.5.0 · " .. (nativeError or "Native aura tracker available."))
     else togglePanel() return end
     refresh()
 end

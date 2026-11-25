@@ -1,0 +1,10 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Frame name="RapiTwistArcPulseTemplate" virtual="true" alpha="0">
+        <Animations>
+            <AnimationGroup autoplay="true" setToFinalAlpha="true">
+                <Alpha order="1" fromAlpha="0" toAlpha="1" duration="0.10"/>
+                <Alpha order="2" fromAlpha="1" toAlpha="0" duration="0.28" smoothing="OUT"/>
+            </AnimationGroup>
+        </Animations>
+    </Frame>
+</Ui>
