@@ -2,7 +2,6 @@
 local ADDON = ...
 local W, H = 180, 132
 local FONT = STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF"
-local WHITE = "Interface\\Buttons\\WHITE8X8"
 local seals = {
     Command = {echo = 1311703, ranks = {20375, 20915, 20918, 20919, 20920}},
     Righteousness = {echo = 1311704, ranks = {21084, 20154, 20287, 20288, 20289, 20290, 20291, 20292, 20293}},
@@ -15,6 +14,7 @@ local seals = {
 }
 local choices = {"Command", "Righteousness", "Fury", "Justice", "Light", "Wisdom", "Crusader", "Martyrdom"}
 local GOLD, BLUE, INK, LIGHT = {1, .79, .40}, {.58, .85, 1}, {.048, .044, .052}, {1, .97, .89}
+local EMPTY = {.42, .50, .58}
 local CORAL = {1, .53, .46}
 local defaults = {x = 0, y = -55, scale = 1, alpha = 1, angle = 220, combatOnly = false, hidden = false}
 local db, root, live, handle, panel, launcher, refreshPanel, nativeError
@@ -98,12 +98,10 @@ local function slot(container, key, ids, draw)
     })
 end
 
-local function bar(parent, x, y, w, h, color)
+local function echoBar(parent)
+    -- The native bar controls visibility only. All visible art is in its children.
     local b = CreateFrame("StatusBar", nil, parent)
-    b:SetSize(w, h)
-    b:SetPoint("TOPLEFT", parent, "TOPLEFT", x, -y)
-    b:SetStatusBarTexture(WHITE)
-    b:SetStatusBarColor(unpack(color))
+    b:SetAllPoints()
     b:EnableMouse(false)
     return b
 end
@@ -144,6 +142,7 @@ local function caption(parent, message, color, offset)
     local t = label(parent, message, 0, 0, 13, color)
     t:ClearAllPoints()
     t:SetPoint("TOP", parent, "TOP", 0, -(offset or 116))
+    return t
 end
 
 local waitCues = {}
@@ -151,7 +150,7 @@ local waitCues = {}
 local function refreshWaitCues()
     for _, cue in ipairs(waitCues) do
         -- Pass the client-owned visibility directly to the native alpha setter.
-        cue.waiting:SetAlphaFromBoolean(cue.ready:IsVisible(), 0, 1)
+        cue.hit:SetAlphaFromBoolean(cue.ready:IsVisible(), 0, 1)
     end
 end
 
@@ -165,22 +164,22 @@ local function sealView(frame, active, nextSeal, count, color)
     local waiting = CreateFrame("Frame", nil, frame)
     waiting:SetAllPoints()
     waiting:EnableMouse(false)
-    caption(waiting, "HIT", BLUE, 97)
+    local hit = caption(waiting, "HIT", BLUE, 78)
     local lamps = nativeContainer(waiting)
     for i = 1, count do
-        arcSegment(waiting, i, count, color, .49)
+        arcSegment(waiting, i, count, EMPTY, .32)
         slot(lamps, "lamp" .. i, {echo}, function(f)
-            local b = bar(f, 0, 0, W, H, color)
-            b:SetStatusBarColor(0, 0, 0, 0)
-            arcSegment(b, i, count, color, .68)
+            local b = echoBar(f)
+            arcSegment(b, i, count, color, 1)
             threshold(f, b, i)
         end)
     end
     lamps:SetEnabled(true)
     local c = nativeContainer(frame)
+    -- Keep completed segments above the lamp container nested under waiting.
+    c:SetFrameLevel(lamps:GetFrameLevel() + 2)
     slot(c, "alert", {echo}, function(f)
-        local b = bar(f, 0, 0, W, H, color)
-        b:SetStatusBarColor(0, 0, 0, 0)
+        local b = echoBar(f)
         local pulse = CreateFrame("Frame", nil, b, "RapiTwistArcPulseTemplate")
         pulse:SetAllPoints()
         pulse:EnableMouse(false)
@@ -191,7 +190,7 @@ local function sealView(frame, active, nextSeal, count, color)
         caption(b, "SWAP", CORAL, 97)
         caption(b, nextSeal, CORAL)
         threshold(f, b, count)
-        table.insert(waitCues, {waiting = waiting, ready = b})
+        table.insert(waitCues, {hit = hit, ready = b})
     end)
     c:SetEnabled(true)
 end
@@ -482,7 +481,7 @@ local function command(message)
         position()
         placeLauncher()
     elseif cmd == "diagnostico" or cmd == "debug" then
-        say("1.6.2 · " .. (nativeError or "Native aura tracker available."))
+        say("1.6.3 · " .. (nativeError or "Native aura tracker available."))
     else togglePanel() return end
     refresh()
 end

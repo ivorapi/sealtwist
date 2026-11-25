@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.6.3
+Use a subdued slate outline for empty arcs. Keep HIT and SWAP on separate baselines and draw the coral ready state above filled segments.
+
 ## 1.6.2
 Restore HIT and the progress arcs before the first echo and after each swap by removing the looping wait-layer animation.
 

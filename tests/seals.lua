@@ -17,13 +17,18 @@ for n=0,3 do
     probe({[20375]=0,[1311703]=n>0 and n or nil},true,false)
     for i=1,3 do
         local slot=ord.slots["lamp"..i]
-        assert(visible(slot.children[1])==(n>=i and n<3))
+        assert(visible(slot.children[1])==(n>=i))
     end
     assert(visible(ordAlert.slots.alert.children[1])==(n==3))
     local cue=ordAlert.slots.alert.children[1]
     assert(visible(withText(ord.parent,"HIT"))==(n<3))
     assert(visible(withText(cue,"SWAP"))==(n==3))
     for _,region in ipairs(cue.children) do assert(not region.color, "Solid swap backdrop") end
+    local hit,swap=withText(ord.parent,"HIT"),withText(cue,"SWAP")
+    assert(math.abs(hit.point[5]-swap.point[5])>=18, "Cue baselines overlap")
+    for _,region in ipairs(ord.parent.children) do
+        if region.tint then assert(region.tint[3]>region.tint[1] and region.tint[4]<.4, "Warm or bright empty arc") end
+    end
     local pulse=cue.children[1]
     assert(pulse.template=="RapiTwistArcPulseTemplate" and visible(pulse)==(n==3))
     local left,right=false,false
@@ -36,8 +41,8 @@ for n=0,3 do
 end
 for _,n in ipairs({0,1,1,2,3,1,1}) do
     probe({[20375]=0,[1311703]=n},true,false)
-    assert(visible(ord.slots.lamp1.children[1])==(n<3))
-    assert(visible(ord.slots.lamp2.bar)==(n==2))
+    assert(visible(ord.slots.lamp1.children[1]))
+    assert(visible(ord.slots.lamp2.bar)==(n>=2))
     assert(visible(ordAlert.slots.alert.bar)==(n>=3))
 end
 -- Swap from three stored echoes. A missed hit leaves the aura snapshot unchanged.
@@ -48,7 +53,7 @@ for attempt=1,2 do
 end
 assert(not visible(right.slots.lamp1) and not visible(rightAlert.slots.alert.children[1]))
 probe({[21084]=0,[1311704]=0},false,true)
-assert(visible(rightAlert.slots.alert.children[1]) and not visible(right.slots.lamp1))
+assert(visible(rightAlert.slots.alert.children[1]) and visible(right.slots.lamp1))
 local cue=rightAlert.slots.alert.children[1]
 assert(visible(cue.children[1]) and cue.children[1].children[1].tint[1]==1)
 probe({[20920]=0,[1311703]=1,[1311704]=1},true,false)
