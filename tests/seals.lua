@@ -7,6 +7,12 @@ assert(not visible(handle) and not visible(panel) and visible(mini))
 local outer,ord,ordAlert,right,rightAlert=unpack(containers)
 assert(not ord.slots.lamp2.bar:IsShown() and not ord.slots.lamp3.bar:IsShown())
 assert(ord.slots.lamp2.options.minApplications==2 and ordAlert.slots.alert.options.minApplications==3)
+for _, tracker in ipairs({ord, right}) do
+    for _, arc in ipairs(tracker.slots.lamp1.children[1].children) do
+        local r, g, b = unpack(arc.tint)
+        assert(b > r and b > g and ((g > r) == (tracker == ord)), "Incorrect earned echo color")
+    end
+end
 local function probe(aurasNow,ordOn,rightOn)
     auras(aurasNow)
     assert(visible(outer.slots.firstSeal)==ordOn and visible(outer.slots.secondSeal)==rightOn)

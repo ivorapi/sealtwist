@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.6.4
+Earned echoes now fill cyan for the first seal and violet for the second.
+
 ## 1.6.3
 Use a subdued slate outline for empty arcs. Keep HIT and SWAP on separate baselines and draw the coral ready state above filled segments.
 

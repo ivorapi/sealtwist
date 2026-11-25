@@ -14,6 +14,7 @@ local seals = {
 }
 local choices = {"Command", "Righteousness", "Fury", "Justice", "Light", "Wisdom", "Crusader", "Martyrdom"}
 local GOLD, BLUE, INK, LIGHT = {1, .79, .40}, {.58, .85, 1}, {.048, .044, .052}, {1, .97, .89}
+local CYAN, VIOLET = {.22, .84, 1}, {.72, .44, 1}
 local EMPTY = {.42, .50, .58}
 local CORAL = {1, .53, .46}
 local defaults = {x = 0, y = -55, scale = 1, alpha = 1, angle = 220, combatOnly = false, hidden = false}
@@ -198,10 +199,10 @@ end
 local function buildTracker()
     local c = nativeContainer(live)
     slot(c, "firstSeal", seals[db.firstSeal].ranks, function(f)
-        sealView(f, db.firstSeal, db.secondSeal, db.firstCount, GOLD)
+        sealView(f, db.firstSeal, db.secondSeal, db.firstCount, CYAN)
     end)
     slot(c, "secondSeal", seals[db.secondSeal].ranks, function(f)
-        sealView(f, db.secondSeal, db.firstSeal, db.secondCount, BLUE)
+        sealView(f, db.secondSeal, db.firstSeal, db.secondCount, VIOLET)
     end)
     c:SetEnabled(true)
     live:SetScript("OnUpdate", refreshWaitCues)
@@ -262,7 +263,7 @@ local function makeHud()
     end
     handle = CreateFrame("Button", nil, root)
     handle:SetAllPoints()
-    arcSegment(handle, 1, 1, GOLD, .85)
+    arcSegment(handle, 1, 1, CYAN, .85)
     caption(handle, "Drag both arcs", LIGHT)
     handle:RegisterForDrag("LeftButton")
     handle:RegisterForClicks("RightButtonUp")
@@ -481,7 +482,7 @@ local function command(message)
         position()
         placeLauncher()
     elseif cmd == "diagnostico" or cmd == "debug" then
-        say("1.6.3 · " .. (nativeError or "Native aura tracker available."))
+        say("1.6.4 · " .. (nativeError or "Native aura tracker available."))
     else togglePanel() return end
     refresh()
 end
