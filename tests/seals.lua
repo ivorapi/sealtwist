@@ -4,6 +4,7 @@ local live, handle=root.children[1],root.children[2]
 assert(#containers==5 and db.x==0 and db.y==-55 and db.layoutVersion==3 and db.locked==nil)
 assert(root.w==180 and root.h==132 and not root.mouse and not live.mouse)
 assert(not visible(handle) and not visible(panel) and visible(mini))
+assert(not live.scripts.OnUpdate, "The HUD must not poll protected aura frames")
 local outer,ord,ordAlert,right,rightAlert=unpack(containers)
 assert(not ord.slots.lamp2.bar:IsShown() and not ord.slots.lamp3.bar:IsShown())
 assert(ord.slots.lamp2.options.minApplications==2 and ordAlert.slots.alert.options.minApplications==3)
@@ -27,7 +28,7 @@ for n=0,3 do
     end
     assert(visible(ordAlert.slots.alert.children[1])==(n==3))
     local cue=ordAlert.slots.alert.children[1]
-    assert(visible(withText(ord.parent,"HIT"))==(n<3))
+    assert(visible(withText(ord.parent,"HIT")))
     assert(visible(withText(cue,"SWAP"))==(n==3))
     for _,region in ipairs(cue.children) do assert(not region.color, "Solid swap backdrop") end
     local hit,swap=withText(ord.parent,"HIT"),withText(cue,"SWAP")

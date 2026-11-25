@@ -2,7 +2,7 @@
 ## Title: RapiTwist
 ## Notes: Track a chosen pair of paladin seals with side arcs and swap cues.
 ## Author: Rapi
-## Version: 1.6.4
+## Version: 1.6.5
 ## SavedVariables: RapiTwistDB
 ## Dependencies: Blizzard_AuraContainer
 ## IconTexture: Interface\Icons\Ability_Warrior_InnerRage

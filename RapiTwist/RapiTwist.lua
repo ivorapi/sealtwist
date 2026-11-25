@@ -146,15 +146,6 @@ local function caption(parent, message, color, offset)
     return t
 end
 
-local waitCues = {}
-
-local function refreshWaitCues()
-    for _, cue in ipairs(waitCues) do
-        -- Pass the client-owned visibility directly to the native alpha setter.
-        cue.hit:SetAlphaFromBoolean(cue.ready:IsVisible(), 0, 1)
-    end
-end
-
 local function sealView(frame, active, nextSeal, count, color)
     local echo = seals[active].echo
     if not echo then
@@ -165,7 +156,7 @@ local function sealView(frame, active, nextSeal, count, color)
     local waiting = CreateFrame("Frame", nil, frame)
     waiting:SetAllPoints()
     waiting:EnableMouse(false)
-    local hit = caption(waiting, "HIT", BLUE, 78)
+    caption(waiting, "HIT", BLUE, 78)
     local lamps = nativeContainer(waiting)
     for i = 1, count do
         arcSegment(waiting, i, count, EMPTY, .32)
@@ -191,7 +182,6 @@ local function sealView(frame, active, nextSeal, count, color)
         caption(b, "SWAP", CORAL, 97)
         caption(b, nextSeal, CORAL)
         threshold(f, b, count)
-        table.insert(waitCues, {hit = hit, ready = b})
     end)
     c:SetEnabled(true)
 end
@@ -205,7 +195,6 @@ local function buildTracker()
         sealView(f, db.secondSeal, db.firstSeal, db.secondCount, VIOLET)
     end)
     c:SetEnabled(true)
-    live:SetScript("OnUpdate", refreshWaitCues)
 end
 
 local function position()
@@ -482,7 +471,7 @@ local function command(message)
         position()
         placeLauncher()
     elseif cmd == "diagnostico" or cmd == "debug" then
-        say("1.6.4 · " .. (nativeError or "Native aura tracker available."))
+        say("1.6.5 · " .. (nativeError or "Native aura tracker available."))
     else togglePanel() return end
     refresh()
 end

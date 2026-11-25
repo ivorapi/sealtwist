@@ -35,6 +35,7 @@ local shownToken, hiddenToken = {}, {}
 function M:IsVisible()
     local region=self
     while region do
+        if region.kind=="AuraButton" then error("Attempt to access forbidden aura object") end
         if not region.shown then return hiddenToken end
         region=region.parent
     end

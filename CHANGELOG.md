@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.6.5
+Remove the per-frame visibility read of restricted aura bars. HIT labels progress while a selected seal is active, and the native echo threshold displays SWAP below it.
+
 ## 1.6.4
 Earned echoes now fill cyan for the first seal and violet for the second.
 

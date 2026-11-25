@@ -1,4 +1,4 @@
-RapiTwist 1.6.4 for WoW Forever (interface 16001)
+RapiTwist 1.6.5 for WoW Forever (interface 16001)
 
 Left-click the minimap button or type /rapitwist to open settings.
 Click First or Second's seal name to cycle through the seals. Picking the
@@ -7,7 +7,7 @@ Choose Apply and reload UI outside combat to save the pair and activate it.
 Closing the panel discards unapplied seal changes.
 
 Empty segments are dim slate. Filled segments are cyan for First and violet for Second. Both sides fill together.
-While waiting for echoes, HIT appears in blue. At the goal, the arcs pulse coral
+HIT labels the progress arcs while a tracked seal is active. At the goal, the arcs pulse coral
 and SWAP appears above the destination seal’s name. Only the two selected seals appear. Command (3) and Righteousness
 (1) are the defaults. Fury, Justice, Light and Wisdom also support echo goals.
 Crusader and Martyrdom display their active name with a manual timing label.
