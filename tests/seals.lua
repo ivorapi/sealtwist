@@ -24,10 +24,10 @@ for n=0,3 do
     local pulse=cue.children[1]
     assert(pulse.template=="RapiTwistArcPulseTemplate" and visible(pulse)==(n==3))
     local left,right=false,false
-    for _,line in ipairs(pulse.children) do
-        left=left or (line.startX<30 and line.endX<30)
-        right=right or (line.startX>150 and line.endX>150)
-        assert(line.color[1]==.58, "Expected blue destination pulse")
+    for _,tex in ipairs(pulse.children) do
+        left=left or tex.point[4]<30
+        right=right or tex.point[4]>100
+        assert(tex.tint[1]==.58 and tex.blend=="ADD", "Expected blue destination pulse")
     end
     assert(left and right)
 end
@@ -42,7 +42,7 @@ assert(not visible(right.slots.lamp1) and not visible(right.slots.alert.children
 probe({[21084]=0,[1311704]=0},false,true)
 assert(visible(right.slots.alert.children[1]) and visible(right.slots.lamp1))
 local cue=right.slots.alert.children[1]
-assert(visible(cue.children[1]) and cue.children[1].children[1].color[1]==1)
+assert(visible(cue.children[1]) and cue.children[1].children[1].tint[1]==1)
 probe({[20920]=0,[1311703]=1,[1311704]=1},true,false)
 assert(visible(ord.slots.lamp1) and not visible(ord.slots.alert.children[1]))
 probe({},false,false)

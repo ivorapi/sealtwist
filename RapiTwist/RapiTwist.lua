@@ -121,27 +121,25 @@ local function threshold(frame, b, count)
     end
 end
 
--- Mirror each segment across the center so one echo fills both sides together.
+-- Mirror one antialiased atlas tile. Transparent padding separates adjacent tiles.
+local ARC_TEXTURE = "Interface\\AddOns\\RapiTwist\\SideArcs"
 local function arcSegment(parent, index, count, color, alpha, thickness)
-    local span = 1.24 / count
-    local start = -.62 + (index - 1) * span + .024
-    local sweep = span - .048
-    local steps = math.ceil(12 / count)
+    local u = (count - 1) * 128 / 512
+    local v = (index - 1) * 340 / 1024
+    local width = 32 * thickness / 5
     for side = -1, 1, 2 do
-        local lastX, lastY
-        for step = 0, steps do
-            local angle = start + sweep * step / steps
-            local x = W / 2 + side * (24 + 59 * math.cos(angle))
-            local y = -39 - 59 * math.sin(angle)
-            if lastX then
-                local line = parent:CreateLine(nil, "ARTWORK")
-                line:SetColorTexture(color[1], color[2], color[3], alpha)
-                line:SetThickness(thickness)
-                line:SetStartPoint("TOPLEFT", parent, lastX, lastY)
-                line:SetEndPoint("TOPLEFT", parent, x, y)
-            end
-            lastX, lastY = x, y
-        end
+        local t = parent:CreateTexture(nil, "ARTWORK")
+        t:SetTexture(ARC_TEXTURE, "CLAMP", "CLAMP", "LINEAR")
+        local left, right = u, u + 128 / 512
+        if side < 0 then left, right = right, left end
+        t:SetTexCoord(left, right, v, v + 336 / 1024)
+        t:SetSize(width, 84)
+        -- Keep the middle of the curved edge at the same x across stroke sizes.
+        local edge = W / 2 + side * 83
+        local x = side > 0 and edge - width * 19 / 32 or edge - width * 13 / 32
+        t:SetPoint("TOPLEFT", parent, "TOPLEFT", x, 3)
+        t:SetVertexColor(color[1], color[2], color[3], alpha)
+        if thickness > 6 then t:SetBlendMode("ADD") end
     end
 end
 
@@ -160,7 +158,7 @@ local function sealView(frame, active, nextSeal, count, color, nextColor)
     end
     local c = nativeContainer(frame)
     for i = 1, count do
-        arcSegment(frame, i, count, LIGHT, .25, 4)
+        arcSegment(frame, i, count, color, .49, 4)
         slot(c, "lamp" .. i, {echo}, function(f)
             local b = bar(f, 0, 0, W, H, color)
             b:SetStatusBarColor(0, 0, 0, 0)
@@ -469,7 +467,7 @@ local function command(message)
         position()
         placeLauncher()
     elseif cmd == "diagnostico" or cmd == "debug" then
-        say("1.5.0 · " .. (nativeError or "Native aura tracker available."))
+        say("1.5.1 · " .. (nativeError or "Native aura tracker available."))
     else togglePanel() return end
     refresh()
 end

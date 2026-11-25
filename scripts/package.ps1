@@ -9,7 +9,7 @@ $zip = Join-Path $dist.FullName "RapiTwist-$version.zip"
 Compress-Archive -LiteralPath $addon -DestinationPath $zip -Force
 $archive = [IO.Compression.ZipFile]::OpenRead($zip)
 try {
-    foreach ($name in 'ArcPulse.xml', 'RapiTwist.toc', 'RapiTwist.lua', 'README.txt', 'LICENSE.txt') {
+    foreach ($name in 'SideArcs.tga', 'ArcPulse.xml', 'RapiTwist.toc', 'RapiTwist.lua', 'README.txt', 'LICENSE.txt') {
         if (-not $archive.GetEntry("RapiTwist/$name")) { throw "Missing $name in the ZIP" }
     }
 } finally {

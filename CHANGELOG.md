@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.5.1
+Antialiased arc textures replace joined line segments. Empty arcs retain the active slot color after a swap.
+
 ## 1.5.0
 Side arcs now flank the character. Both arcs pulse in the destination color at the selected echo goal. The layout recenters once on upgrade and can be moved from the minimap.
 
