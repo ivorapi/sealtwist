@@ -228,10 +228,10 @@ local function buildTracker()
     local firstIsBuilder = db.firstCount >= db.secondCount
     local c = nativeContainer(live)
     slot(c, "firstSeal", seals[db.firstSeal].ranks, function(f)
-        sealView(f, db.firstSeal, db.secondSeal, db.firstCount, CYAN, firstIsBuilder and CORAL or MINT)
+        sealView(f, db.firstSeal, db.secondSeal, db.firstCount, CYAN, firstIsBuilder and MINT or CORAL)
     end)
     slot(c, "secondSeal", seals[db.secondSeal].ranks, function(f)
-        sealView(f, db.secondSeal, db.firstSeal, db.secondCount, VIOLET, firstIsBuilder and MINT or CORAL)
+        sealView(f, db.secondSeal, db.firstSeal, db.secondCount, VIOLET, firstIsBuilder and CORAL or MINT)
     end)
     c:SetEnabled(true)
 end
@@ -510,7 +510,7 @@ local function command(message)
         position()
         placeLauncher()
     elseif cmd == "diagnostico" or cmd == "debug" then
-        say("1.6.7 · " .. (nativeError or "Native aura tracker available."))
+        say("1.6.8 · " .. (nativeError or "Native aura tracker available."))
     else togglePanel() return end
     refresh()
 end

@@ -16,7 +16,7 @@ local function check(slot, rankID, echoID, active, destination, goal)
     end
     local cue = tracker.slots.alert.children[1]
     local tint = cue.children[1].children[1].tint
-    assert((tint[2] == 1) == (goal == 2), "Return to higher goal must be mint")
+    assert((tint[2] == .53) == (goal == 2), "Return to higher goal must be coral")
     for n = 1, 3 do
         values[tonumber(echoID)] = n
         auras(values)

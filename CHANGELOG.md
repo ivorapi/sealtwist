@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.6.8
+Invert the swap colors: mint green to discharge and coral to return.
+
 ## 1.6.7
 Swap alerts are coral toward the lower echo goal and mint green on the return to the higher goal. For equal goals the return is toward First.
 

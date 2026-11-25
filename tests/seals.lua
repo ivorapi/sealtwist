@@ -48,7 +48,7 @@ for n=0,3 do
     for _,tex in ipairs(pulse.children) do
         left=left or tex.point[4]<30
         right=right or tex.point[4]>100
-        assert(tex.tint[1]==1 and tex.tint[2]==.53 and tex.blend=="ADD", "Expected coral swap pulse")
+        assert(tex.tint[1]==.32 and tex.tint[2]==1 and tex.blend=="ADD", "Expected mint swap pulse")
     end
     assert(left and right)
 end
@@ -70,7 +70,7 @@ probe({[21084]=0,[1311704]=0},false,true)
 assert(visible(rightAlert.slots.alert.children[1]) and visible(right.slots.lamp1))
 assert(not hasHit(rightWait))
 local cue=rightAlert.slots.alert.children[1]
-assert(visible(cue.children[1]) and cue.children[1].children[1].tint[2]==1)
+assert(visible(cue.children[1]) and cue.children[1].children[1].tint[2]==.53)
 probe({[20920]=0,[1311703]=1,[1311704]=1},true,false)
 assert(visible(ord.slots.lamp1) and not visible(ordAlert.slots.alert.children[1]))
 assert(hasHit(ordWait))
