@@ -16,7 +16,7 @@ local choices = {"Command", "Righteousness", "Fury", "Justice", "Light", "Wisdom
 local GOLD, BLUE, INK, LIGHT = {1, .79, .40}, {.58, .85, 1}, {.048, .044, .052}, {1, .97, .89}
 local CYAN, VIOLET = {.22, .84, 1}, {.72, .44, 1}
 local EMPTY = {.42, .50, .58}
-local CORAL = {1, .53, .46}
+local CORAL, MINT = {1, .53, .46}, {.32, 1, .63}
 local defaults = {x = 0, y = -55, scale = 1, alpha = 1, angle = 220, combatOnly = false, hidden = false}
 local db, root, live, handle, panel, launcher, refreshPanel, nativeError
 local editing, dragging = false, false
@@ -184,7 +184,7 @@ local function waitCaption(parent, seal, count)
     cues:SetEnabled(true)
 end
 
-local function sealView(frame, active, nextSeal, count, color)
+local function sealView(frame, active, nextSeal, count, color, swapColor)
     local echo = seals[active].echo
     if not echo then
         arcSegment(frame, 1, 1, color, .4)
@@ -214,23 +214,24 @@ local function sealView(frame, active, nextSeal, count, color)
         pulse:SetAllPoints()
         pulse:EnableMouse(false)
         for i = 1, count do
-            arcSegment(b, i, count, CORAL, 1)
-            arcSegment(pulse, i, count, CORAL, .65, true)
+            arcSegment(b, i, count, swapColor, 1)
+            arcSegment(pulse, i, count, swapColor, .65, true)
         end
-        caption(b, "SWAP", CORAL, 97)
-        caption(b, nextSeal, CORAL)
+        caption(b, "SWAP", swapColor, 97)
+        caption(b, nextSeal, swapColor)
         threshold(f, b, count)
     end)
     c:SetEnabled(true)
 end
 
 local function buildTracker()
+    local firstIsBuilder = db.firstCount >= db.secondCount
     local c = nativeContainer(live)
     slot(c, "firstSeal", seals[db.firstSeal].ranks, function(f)
-        sealView(f, db.firstSeal, db.secondSeal, db.firstCount, CYAN)
+        sealView(f, db.firstSeal, db.secondSeal, db.firstCount, CYAN, firstIsBuilder and CORAL or MINT)
     end)
     slot(c, "secondSeal", seals[db.secondSeal].ranks, function(f)
-        sealView(f, db.secondSeal, db.firstSeal, db.secondCount, VIOLET)
+        sealView(f, db.secondSeal, db.firstSeal, db.secondCount, VIOLET, firstIsBuilder and MINT or CORAL)
     end)
     c:SetEnabled(true)
 end
@@ -509,7 +510,7 @@ local function command(message)
         position()
         placeLauncher()
     elseif cmd == "diagnostico" or cmd == "debug" then
-        say("1.6.6 · " .. (nativeError or "Native aura tracker available."))
+        say("1.6.7 · " .. (nativeError or "Native aura tracker available."))
     else togglePanel() return end
     refresh()
 end

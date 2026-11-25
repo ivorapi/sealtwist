@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.6.7
+Swap alerts are coral toward the lower echo goal and mint green on the return to the higher goal. For equal goals the return is toward First.
+
 ## 1.6.6
 Show HIT only below the active echo goal. The native aura layout and stack formatter switch the caption without polling protected frames.
 

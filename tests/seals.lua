@@ -70,7 +70,7 @@ probe({[21084]=0,[1311704]=0},false,true)
 assert(visible(rightAlert.slots.alert.children[1]) and visible(right.slots.lamp1))
 assert(not hasHit(rightWait))
 local cue=rightAlert.slots.alert.children[1]
-assert(visible(cue.children[1]) and cue.children[1].children[1].tint[1]==1)
+assert(visible(cue.children[1]) and cue.children[1].children[1].tint[2]==1)
 probe({[20920]=0,[1311703]=1,[1311704]=1},true,false)
 assert(visible(ord.slots.lamp1) and not visible(ordAlert.slots.alert.children[1]))
 assert(hasHit(ordWait))
