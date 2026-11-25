@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.6.2
+Restore HIT and the progress arcs before the first echo and after each swap by removing the looping wait-layer animation.
+
 ## 1.6.1
 Remove the solid SWAP badge and align the arc pulse with the underlying stroke. The ready cue hides the waiting layer.
 

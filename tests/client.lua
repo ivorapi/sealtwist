@@ -12,9 +12,6 @@ local M = {}
 function CreateFrame(kind, name, parent, template)
     local f = setmetatable({kind=kind,parent=parent,template=template,children={},shown=true,
         scale=1,w=100,h=100,scripts={},events={},slots={},cx=960,cy=540}, {__index=M})
-    if template=="RapiTwistWaitGateTemplate" then
-        f.Mute={WaitAlpha={SetTarget=function(_,target) target.mutedBy=f end}}
-    end
     if parent then table.insert(parent.children, f) end
     if name then _G[name]=f end
     if kind=="AuraContainer" then table.insert(containers,f) end
@@ -34,6 +31,19 @@ function M:SetScale(n) self.scale=n end
 function M:GetWidth() return self.w end
 function M:GetHeight() return self.h end
 function M:GetEffectiveScale() return self.scale end
+local shownToken, hiddenToken = {}, {}
+function M:IsVisible()
+    local region=self
+    while region do
+        if not region.shown then return hiddenToken end
+        region=region.parent
+    end
+    return shownToken
+end
+function M:SetAlphaFromBoolean(token,yes,no)
+    assert(token==shownToken or token==hiddenToken)
+    self.alpha=token==shownToken and yes or no
+end
 function M:SetAlpha(n) self.alpha=n end
 function M:SetBlendMode(mode) self.blend=mode end
 function M:SetVertexColor(...) self.tint={...} end
@@ -86,9 +96,12 @@ function auras(values)
             if f.bar then f.bar:SetShown((n or 0)>=f.options.minApplications) end
         end
     end
+    for _,f in ipairs(frames) do
+        if f.scripts.OnUpdate and f:IsVisible()==shownToken then f.scripts.OnUpdate(f,1/60) end
+    end
 end
 function visible(f)
-    if not f.shown or (f.mutedBy and visible(f.mutedBy)) then return false end
+    if not f.shown or f.alpha==0 then return false end
     return not f.parent or visible(f.parent)
 end
 function click(f,key) f.scripts.OnClick(f,key or "LeftButton") end

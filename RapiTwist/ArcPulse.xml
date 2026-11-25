@@ -7,11 +7,4 @@
             </AnimationGroup>
         </Animations>
     </Frame>
-    <Frame name="RapiTwistWaitGateTemplate" virtual="true">
-        <Animations>
-            <AnimationGroup parentKey="Mute" autoplay="true" looping="REPEAT">
-                <Alpha parentKey="WaitAlpha" fromAlpha="0" toAlpha="0" duration="1"/>
-            </AnimationGroup>
-        </Animations>
-    </Frame>
 </Ui>

@@ -12,7 +12,7 @@ Command, Righteousness, Fury, Justice, Light and Wisdom use the player's native 
 
 ## Installation
 
-Download [RapiTwist-1.6.1.zip](https://github.com/ivorapi/sealtwist/releases/download/v1.6.1/RapiTwist-1.6.1.zip). Extract the `RapiTwist` folder into `World of Warcraft/_forever_/Interface/AddOns/`. Enable RapiTwist in the addon list. Use `/reload` after updating from 1.3.0.
+Download [RapiTwist-1.6.2.zip](https://github.com/ivorapi/sealtwist/releases/download/v1.6.2/RapiTwist-1.6.2.zip). Extract the `RapiTwist` folder into `World of Warcraft/_forever_/Interface/AddOns/`. Enable RapiTwist in the addon list. Use `/reload` after updating from 1.3.0.
 
 When upgrading from SealTwist Visual 1.2.x, close WoW and move the old `SealTwistVisual` addon folder out of `Interface/AddOns`. To keep its settings, copy `WTF/Account/<account>/SavedVariables/SealTwistVisual.lua` to `RapiTwist.lua` in the same directory and rename the initial variable from `SealTwistVisualDB` to `RapiTwistDB`. Keep your existing RapiTwist settings file if present.
 

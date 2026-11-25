@@ -146,6 +146,15 @@ local function caption(parent, message, color, offset)
     t:SetPoint("TOP", parent, "TOP", 0, -(offset or 116))
 end
 
+local waitCues = {}
+
+local function refreshWaitCues()
+    for _, cue in ipairs(waitCues) do
+        -- Pass the client-owned visibility directly to the native alpha setter.
+        cue.waiting:SetAlphaFromBoolean(cue.ready:IsVisible(), 0, 1)
+    end
+end
+
 local function sealView(frame, active, nextSeal, count, color)
     local echo = seals[active].echo
     if not echo then
@@ -179,12 +188,10 @@ local function sealView(frame, active, nextSeal, count, color)
             arcSegment(b, i, count, CORAL, 1)
             arcSegment(pulse, i, count, CORAL, .65, true)
         end
-        -- The threshold owns this visual transition, including when an echo expires.
-        local gate = CreateFrame("Frame", nil, b, "RapiTwistWaitGateTemplate")
-        gate.Mute.WaitAlpha:SetTarget(waiting)
         caption(b, "SWAP", CORAL, 97)
         caption(b, nextSeal, CORAL)
         threshold(f, b, count)
+        table.insert(waitCues, {waiting = waiting, ready = b})
     end)
     c:SetEnabled(true)
 end
@@ -198,6 +205,7 @@ local function buildTracker()
         sealView(f, db.secondSeal, db.firstSeal, db.secondCount, BLUE)
     end)
     c:SetEnabled(true)
+    live:SetScript("OnUpdate", refreshWaitCues)
 end
 
 local function position()
@@ -474,7 +482,7 @@ local function command(message)
         position()
         placeLauncher()
     elseif cmd == "diagnostico" or cmd == "debug" then
-        say("1.6.1 · " .. (nativeError or "Native aura tracker available."))
+        say("1.6.2 · " .. (nativeError or "Native aura tracker available."))
     else togglePanel() return end
     refresh()
 end
